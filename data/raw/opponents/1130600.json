@@ -1,0 +1,21 @@
+{
+ "gamesPlayed": 45,
+ "goals": 113,
+ "goalsAgainst": 97,
+ "id": 1130600,
+ "losses": 21,
+ "matches": [
+  "84274689120469",
+  "84392303230303"
+ ],
+ "name": "9RB3H",
+ "playoffGames": 0,
+ "promotions": 3,
+ "relegations": 2,
+ "skillRating": 1532,
+ "statsAt": "2026-10-14T08:45:00Z",
+ "ties": 3,
+ "unbeatenStreak": 2,
+ "winStreak": 0,
+ "wins": 21
+}

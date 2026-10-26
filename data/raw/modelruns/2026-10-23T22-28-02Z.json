@@ -1,0 +1,24 @@
+{
+ "baselineLogLoss": 0.921,
+ "baselineMAE": 2.4,
+ "bestLineup": [
+  "FlorianSqwirtz",
+  "MaDHooMaN",
+  "Muhammadfatir",
+  "MusaabChaudhary",
+  "ZebrasGraveyard"
+ ],
+ "bestProbs": {
+  "D": 0.164,
+  "L": 0.466,
+  "W": 0.37
+ },
+ "logLoss": 0.847,
+ "matchMAE": 2.09,
+ "model": "poisson",
+ "nApps": 325,
+ "nMatches": 82,
+ "ratingBaselineMAE": 0.92,
+ "ratingMAE": 0.9,
+ "trainedAt": "2026-10-23T22:28:02Z"
+}

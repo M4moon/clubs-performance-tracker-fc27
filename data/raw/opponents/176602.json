@@ -1,0 +1,20 @@
+{
+ "gamesPlayed": 78,
+ "goals": 192,
+ "goalsAgainst": 222,
+ "id": 176602,
+ "losses": 40,
+ "matches": [
+  "117734594420106"
+ ],
+ "name": "Pepsi Offside",
+ "playoffGames": 10,
+ "promotions": 2,
+ "relegations": 1,
+ "skillRating": 1556,
+ "statsAt": "2026-10-19T17:19:54Z",
+ "ties": 8,
+ "unbeatenStreak": 3,
+ "winStreak": 3,
+ "wins": 30
+}

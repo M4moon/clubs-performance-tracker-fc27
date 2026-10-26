@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-22T18:19:49Z",
+ "humans": 2,
+ "matchId": "127158771550371",
+ "opp": "Swellers FAC",
+ "oppId": 1179205,
+ "players": [
+  {
+   "a": 1,
+   "arch": 12,
+   "g": 1,
+   "gc": 1,
+   "mom": 1,
+   "p": "basicactus",
+   "pa": 27,
+   "pm": 19,
+   "pos": "forward",
+   "r": 8.5,
+   "red": 0,
+   "sec": 967,
+   "sh": 2,
+   "sv": 0,
+   "ta": 2,
+   "tm": 1
+  },
+  {
+   "a": 1,
+   "arch": 9,
+   "g": 1,
+   "gc": 1,
+   "mom": 0,
+   "p": "UnderCover_l94l",
+   "pa": 34,
+   "pm": 25,
+   "pos": "forward",
+   "r": 8.4,
+   "red": 0,
+   "sec": 967,
+   "sh": 3,
+   "sv": 0,
+   "ta": 9,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

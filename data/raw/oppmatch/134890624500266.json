@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-24T20:19:18Z",
+ "humans": 2,
+ "matchId": "134890624500266",
+ "opp": "THE MAKNEEZ",
+ "oppId": 330440,
+ "players": [
+  {
+   "a": 1,
+   "arch": 9,
+   "g": 2,
+   "gc": 3,
+   "mom": 0,
+   "p": "MLH3137",
+   "pa": 29,
+   "pm": 19,
+   "pos": "midfielder",
+   "r": 8.5,
+   "red": 0,
+   "sec": 996,
+   "sh": 7,
+   "sv": 0,
+   "ta": 0,
+   "tm": 0
+  },
+  {
+   "a": 1,
+   "arch": 11,
+   "g": 1,
+   "gc": 3,
+   "mom": 0,
+   "p": "oht94",
+   "pa": 21,
+   "pm": 9,
+   "pos": "forward",
+   "r": 7.4,
+   "red": 0,
+   "sec": 996,
+   "sh": 4,
+   "sv": 0,
+   "ta": 6,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

@@ -1,0 +1,7 @@
+stat,forecasts,model_mae,own_average_mae
+Match rating,340,0.91,0.93
+Goals,340,0.69,0.69
+Assists,340,0.62,0.6
+Shots,340,1.43,1.45
+Passes made,340,4.56,4.61
+Tackles won,340,0.96,0.95

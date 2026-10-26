@@ -1,0 +1,882 @@
+{
+ "games": 92,
+ "first_game": "2026-10-07 17:26",
+ "last_game": "2026-10-24 20:33",
+ "sessions": 14,
+ "team": {
+  "All games": {
+   "games": 92,
+   "W": 33,
+   "D": 8,
+   "L": 51,
+   "points_per_game": 1.16,
+   "goals_for_per_game": 2.35,
+   "goals_against_per_game": 2.92,
+   "shots_per_game": 6.98,
+   "opp_shots_per_game": 6.38,
+   "shot_conversion_pct": 33.6,
+   "opp_shot_conversion_pct": 45.8,
+   "pass_completion_pct": 64.9,
+   "opp_pass_completion_pct": 71.3,
+   "pass_share_pct": 49.5
+  },
+  "League": {
+   "games": 80,
+   "W": 30,
+   "D": 8,
+   "L": 42,
+   "points_per_game": 1.23,
+   "goals_for_per_game": 2.44,
+   "goals_against_per_game": 2.85,
+   "shots_per_game": 7.08,
+   "opp_shots_per_game": 6.01,
+   "shot_conversion_pct": 34.5,
+   "opp_shot_conversion_pct": 47.4,
+   "pass_completion_pct": 65.3,
+   "opp_pass_completion_pct": 70.6,
+   "pass_share_pct": 50.1
+  },
+  "Playoffs": {
+   "games": 12,
+   "W": 3,
+   "D": 0,
+   "L": 9,
+   "points_per_game": 0.75,
+   "goals_for_per_game": 1.75,
+   "goals_against_per_game": 3.42,
+   "shots_per_game": 6.33,
+   "opp_shots_per_game": 8.83,
+   "shot_conversion_pct": 27.6,
+   "opp_shot_conversion_pct": 38.7,
+   "pass_completion_pct": 62.3,
+   "opp_pass_completion_pct": 74.8,
+   "pass_share_pct": 46.1
+  },
+  "Season 1 (7-19 Oct)": {
+   "games": 55,
+   "W": 19,
+   "D": 6,
+   "L": 30,
+   "points_per_game": 1.15,
+   "goals_for_per_game": 2.22,
+   "goals_against_per_game": 2.95,
+   "shots_per_game": 6.73,
+   "opp_shots_per_game": 6.78,
+   "shot_conversion_pct": 33.0,
+   "opp_shot_conversion_pct": 43.4,
+   "pass_completion_pct": 64.0,
+   "opp_pass_completion_pct": 72.0,
+   "pass_share_pct": 48.2
+  },
+  "Season 2 (from 19 Oct)": {
+   "games": 37,
+   "W": 14,
+   "D": 2,
+   "L": 21,
+   "points_per_game": 1.19,
+   "goals_for_per_game": 2.54,
+   "goals_against_per_game": 2.89,
+   "shots_per_game": 7.35,
+   "opp_shots_per_game": 5.78,
+   "shot_conversion_pct": 34.6,
+   "opp_shot_conversion_pct": 50.0,
+   "pass_completion_pct": 66.4,
+   "opp_pass_completion_pct": 70.0,
+   "pass_share_pct": 51.7
+  }
+ },
+ "drivers": [
+  {
+   "factor": "Opponent skill rating",
+   "group": "Weaker half (under 1498)",
+   "games": 46,
+   "points_per_game": 1.65,
+   "goal_diff_per_game": 0.72,
+   "win_pct": 52.2
+  },
+  {
+   "factor": "Opponent skill rating",
+   "group": "Stronger half (skill 1498+)",
+   "games": 46,
+   "points_per_game": 0.67,
+   "goal_diff_per_game": -1.87,
+   "win_pct": 19.6
+  },
+  {
+   "factor": "Human players, us vs them",
+   "group": "Fewer humans than them",
+   "games": 23,
+   "points_per_game": 0.57,
+   "goal_diff_per_game": -1.74,
+   "win_pct": 13.0
+  },
+  {
+   "factor": "Human players, us vs them",
+   "group": "Same number",
+   "games": 22,
+   "points_per_game": 0.86,
+   "goal_diff_per_game": -1.36,
+   "win_pct": 27.3
+  },
+  {
+   "factor": "Human players, us vs them",
+   "group": "More humans than them",
+   "games": 47,
+   "points_per_game": 1.6,
+   "goal_diff_per_game": 0.36,
+   "win_pct": 51.1
+  },
+  {
+   "factor": "Game number in a session",
+   "group": "Games 1-2",
+   "games": 27,
+   "points_per_game": 1.15,
+   "goal_diff_per_game": -0.22,
+   "win_pct": 37.0
+  },
+  {
+   "factor": "Game number in a session",
+   "group": "Games 3-4",
+   "games": 25,
+   "points_per_game": 1.08,
+   "goal_diff_per_game": -0.8,
+   "win_pct": 32.0
+  },
+  {
+   "factor": "Game number in a session",
+   "group": "Game 5 or later",
+   "games": 40,
+   "points_per_game": 1.23,
+   "goal_diff_per_game": -0.68,
+   "win_pct": 37.5
+  }
+ ],
+ "regression": [
+  {
+   "term": "intercept (median opponent, equal numbers, game 0)",
+   "goal_diff_effect": -0.24,
+   "std_error": 0.66
+  },
+  {
+   "term": "per +100 opponent skill rating",
+   "goal_diff_effect": -0.87,
+   "std_error": 0.19
+  },
+  {
+   "term": "per extra human vs opponent",
+   "goal_diff_effect": 0.24,
+   "std_error": 0.16
+  },
+  {
+   "term": "per later game in session (capped at 6)",
+   "goal_diff_effect": -0.13,
+   "std_error": 0.16
+  },
+  {
+   "term": "playoff game",
+   "goal_diff_effect": 0.0,
+   "std_error": 0.82
+  }
+ ],
+ "median_opp_skill": 1498.5,
+ "ai_goals": 9,
+ "goals_for": 216,
+ "squad": [
+  {
+   "player": "MusaabChaudhary",
+   "games": 92,
+   "positions": "midfielder 44, forward 34, defender 14",
+   "avg_rating": 8.14,
+   "goals_per_game": 0.55,
+   "assists_per_game": 0.64,
+   "shots_per_game": 2.18,
+   "shot_conversion_pct": 25.4,
+   "passes_made_per_game": 13.7,
+   "pass_completion_pct": 63.8,
+   "tackles_won_per_game": 1.77,
+   "tackle_success_pct": 22.6,
+   "motm": 25,
+   "team_ppg_with": 1.16,
+   "team_ppg_without": NaN,
+   "team_gd_with": -0.58,
+   "team_gd_without": NaN,
+   "team_gd_vs_expected_with": -0.0,
+   "team_gd_vs_expected_without": NaN,
+   "with_minus_without": NaN,
+   "with_minus_without_se": NaN,
+   "avg_opponent_skill": 1496.0
+  },
+  {
+   "player": "DisBeMamoon",
+   "games": 71,
+   "positions": "midfielder 42, forward 29",
+   "avg_rating": 7.63,
+   "goals_per_game": 0.39,
+   "assists_per_game": 0.51,
+   "shots_per_game": 1.49,
+   "shot_conversion_pct": 26.4,
+   "passes_made_per_game": 12.1,
+   "pass_completion_pct": 61.6,
+   "tackles_won_per_game": 1.27,
+   "tackle_success_pct": 16.5,
+   "motm": 11,
+   "team_ppg_with": 1.08,
+   "team_ppg_without": 1.43,
+   "team_gd_with": -0.72,
+   "team_gd_without": -0.1,
+   "team_gd_vs_expected_with": -0.11,
+   "team_gd_vs_expected_without": 0.36,
+   "with_minus_without": -0.47,
+   "with_minus_without_se": 0.51,
+   "avg_opponent_skill": 1500.0
+  },
+  {
+   "player": "ZebrasGraveyard",
+   "games": 59,
+   "positions": "forward 44, midfielder 15",
+   "avg_rating": 6.99,
+   "goals_per_game": 0.37,
+   "assists_per_game": 0.63,
+   "shots_per_game": 1.1,
+   "shot_conversion_pct": 33.8,
+   "passes_made_per_game": 7.7,
+   "pass_completion_pct": 61.0,
+   "tackles_won_per_game": 0.51,
+   "tackle_success_pct": 32.3,
+   "motm": 3,
+   "team_ppg_with": 1.2,
+   "team_ppg_without": 1.09,
+   "team_gd_with": -0.63,
+   "team_gd_without": -0.48,
+   "team_gd_vs_expected_with": 0.18,
+   "team_gd_vs_expected_without": -0.32,
+   "with_minus_without": 0.5,
+   "with_minus_without_se": 0.51,
+   "avg_opponent_skill": 1520.0
+  },
+  {
+   "player": "Muhammadfatir",
+   "games": 53,
+   "positions": "midfielder 31, forward 22",
+   "avg_rating": 6.75,
+   "goals_per_game": 0.32,
+   "assists_per_game": 0.17,
+   "shots_per_game": 0.81,
+   "shot_conversion_pct": 39.5,
+   "passes_made_per_game": 7.1,
+   "pass_completion_pct": 63.4,
+   "tackles_won_per_game": 1.02,
+   "tackle_success_pct": 24.9,
+   "motm": 1,
+   "team_ppg_with": 1.32,
+   "team_ppg_without": 0.95,
+   "team_gd_with": -0.34,
+   "team_gd_without": -0.9,
+   "team_gd_vs_expected_with": 0.14,
+   "team_gd_vs_expected_without": -0.19,
+   "with_minus_without": 0.34,
+   "with_minus_without_se": 0.53,
+   "avg_opponent_skill": 1487.0
+  },
+  {
+   "player": "FlorianSqwirtz",
+   "games": 45,
+   "positions": "forward 44, midfielder 1",
+   "avg_rating": 7.55,
+   "goals_per_game": 1.16,
+   "assists_per_game": 0.31,
+   "shots_per_game": 3.13,
+   "shot_conversion_pct": 36.9,
+   "passes_made_per_game": 8.4,
+   "pass_completion_pct": 79.0,
+   "tackles_won_per_game": 0.27,
+   "tackle_success_pct": 14.1,
+   "motm": 6,
+   "team_ppg_with": 1.33,
+   "team_ppg_without": 1.0,
+   "team_gd_with": -0.49,
+   "team_gd_without": -0.66,
+   "team_gd_vs_expected_with": 0.34,
+   "team_gd_vs_expected_without": -0.33,
+   "with_minus_without": 0.67,
+   "with_minus_without_se": 0.51,
+   "avg_opponent_skill": 1523.0
+  },
+  {
+   "player": "MaDHooMaN",
+   "games": 28,
+   "positions": "forward 24, midfielder 4",
+   "avg_rating": 7.35,
+   "goals_per_game": 1.04,
+   "assists_per_game": 0.25,
+   "shots_per_game": 2.29,
+   "shot_conversion_pct": 45.3,
+   "passes_made_per_game": 5.9,
+   "pass_completion_pct": 76.4,
+   "tackles_won_per_game": 0.5,
+   "tackle_success_pct": 6.1,
+   "motm": 2,
+   "team_ppg_with": 1.79,
+   "team_ppg_without": 0.89,
+   "team_gd_with": 0.79,
+   "team_gd_without": -1.17,
+   "team_gd_vs_expected_with": 0.8,
+   "team_gd_vs_expected_without": -0.35,
+   "with_minus_without": 1.16,
+   "with_minus_without_se": 0.52,
+   "avg_opponent_skill": 1439.0
+  },
+  {
+   "player": "bxlter",
+   "games": 18,
+   "positions": "forward 14, midfielder 4",
+   "avg_rating": 6.33,
+   "goals_per_game": 0.33,
+   "assists_per_game": 0.17,
+   "shots_per_game": 1.0,
+   "shot_conversion_pct": 33.3,
+   "passes_made_per_game": 5.2,
+   "pass_completion_pct": 61.2,
+   "tackles_won_per_game": 0.28,
+   "tackle_success_pct": 33.3,
+   "motm": 0,
+   "team_ppg_with": 1.0,
+   "team_ppg_without": 1.2,
+   "team_gd_with": -1.83,
+   "team_gd_without": -0.27,
+   "team_gd_vs_expected_with": -0.7,
+   "team_gd_vs_expected_without": 0.17,
+   "with_minus_without": -0.88,
+   "with_minus_without_se": 0.65,
+   "avg_opponent_skill": 1553.0
+  },
+  {
+   "player": "Gaffy_G",
+   "games": 5,
+   "positions": "midfielder 5",
+   "avg_rating": 7.98,
+   "goals_per_game": 0.4,
+   "assists_per_game": 0.4,
+   "shots_per_game": 0.8,
+   "shot_conversion_pct": 50.0,
+   "passes_made_per_game": 17.2,
+   "pass_completion_pct": 83.5,
+   "tackles_won_per_game": 0.8,
+   "tackle_success_pct": 28.6,
+   "motm": 0,
+   "team_ppg_with": 1.2,
+   "team_ppg_without": 1.16,
+   "team_gd_with": -1.0,
+   "team_gd_without": -0.55,
+   "team_gd_vs_expected_with": -0.12,
+   "team_gd_vs_expected_without": 0.01,
+   "with_minus_without": -0.13,
+   "with_minus_without_se": 1.37,
+   "avg_opponent_skill": 1527.0
+  }
+ ],
+ "trends": [
+  {
+   "player": "DisBeMamoon",
+   "games": 71,
+   "first_games": 35,
+   "first_rating": 7.45,
+   "first_ga_per_game": 1.09,
+   "first_pass_pct": 60.5,
+   "first_tackle_pct": 13.3,
+   "first_opp_skill": 1506.0,
+   "second_games": 36,
+   "second_rating": 7.81,
+   "second_ga_per_game": 0.72,
+   "second_pass_pct": 62.7,
+   "second_tackle_pct": 20.1,
+   "second_opp_skill": 1494.0
+  },
+  {
+   "player": "FlorianSqwirtz",
+   "games": 45,
+   "first_games": 22,
+   "first_rating": 7.79,
+   "first_ga_per_game": 1.73,
+   "first_pass_pct": 77.0,
+   "first_tackle_pct": 16.7,
+   "first_opp_skill": 1454.0,
+   "second_games": 23,
+   "second_rating": 7.33,
+   "second_ga_per_game": 1.22,
+   "second_pass_pct": 81.5,
+   "second_tackle_pct": 12.2,
+   "second_opp_skill": 1588.0
+  },
+  {
+   "player": "MaDHooMaN",
+   "games": 28,
+   "first_games": 14,
+   "first_rating": 7.55,
+   "first_ga_per_game": 1.71,
+   "first_pass_pct": 73.1,
+   "first_tackle_pct": 2.5,
+   "first_opp_skill": 1372.0,
+   "second_games": 14,
+   "second_rating": 7.16,
+   "second_ga_per_game": 0.86,
+   "second_pass_pct": 79.6,
+   "second_tackle_pct": 10.1,
+   "second_opp_skill": 1506.0
+  },
+  {
+   "player": "Muhammadfatir",
+   "games": 53,
+   "first_games": 26,
+   "first_rating": 6.87,
+   "first_ga_per_game": 0.38,
+   "first_pass_pct": 63.6,
+   "first_tackle_pct": 31.5,
+   "first_opp_skill": 1454.0,
+   "second_games": 27,
+   "second_rating": 6.63,
+   "second_ga_per_game": 0.59,
+   "second_pass_pct": 63.1,
+   "second_tackle_pct": 20.3,
+   "second_opp_skill": 1518.0
+  },
+  {
+   "player": "MusaabChaudhary",
+   "games": 92,
+   "first_games": 46,
+   "first_rating": 8.14,
+   "first_ga_per_game": 1.2,
+   "first_pass_pct": 62.0,
+   "first_tackle_pct": 23.5,
+   "first_opp_skill": 1469.0,
+   "second_games": 46,
+   "second_rating": 8.14,
+   "second_ga_per_game": 1.2,
+   "second_pass_pct": 66.1,
+   "second_tackle_pct": 21.6,
+   "second_opp_skill": 1524.0
+  },
+  {
+   "player": "ZebrasGraveyard",
+   "games": 59,
+   "first_games": 29,
+   "first_rating": 6.86,
+   "first_ga_per_game": 0.86,
+   "first_pass_pct": 59.9,
+   "first_tackle_pct": 28.6,
+   "first_opp_skill": 1562.0,
+   "second_games": 30,
+   "second_rating": 7.11,
+   "second_ga_per_game": 1.13,
+   "second_pass_pct": 62.0,
+   "second_tackle_pct": 35.3,
+   "second_opp_skill": 1480.0
+  },
+  {
+   "player": "bxlter",
+   "games": 18,
+   "first_games": 9,
+   "first_rating": 6.41,
+   "first_ga_per_game": 0.67,
+   "first_pass_pct": 62.2,
+   "first_tackle_pct": 36.4,
+   "first_opp_skill": 1492.0,
+   "second_games": 9,
+   "second_rating": 6.26,
+   "second_ga_per_game": 0.33,
+   "second_pass_pct": 60.0,
+   "second_tackle_pct": 25.0,
+   "second_opp_skill": 1615.0
+  }
+ ],
+ "team_events": {
+  "decision_pct": 48.3,
+  "in_position_pct": 68.9,
+  "possession_lost_per_game": 4.0,
+  "possession_won_per_game": 1.2,
+  "typical_decision_pct": 63.1,
+  "typical_in_position_pct": 88.3,
+  "typical_possession_lost": 3.1,
+  "typical_possession_won": 1.3,
+  "event_appearances": 295.0
+ },
+ "coaching": [
+  {
+   "player": "DisBeMamoon",
+   "main_position": "midfielder",
+   "event_games": 57,
+   "strengths": "none in the top quarter",
+   "work_on": "Good or best option taken 37.7% vs typical 56.9% (bottom 10%); Possession lost 5.6 a game vs typical 2.5 (11th percentile); Passes completed 12.1 a game vs typical 15.7 (25th percentile)"
+  },
+  {
+   "player": "FlorianSqwirtz",
+   "main_position": "forward",
+   "event_games": 32,
+   "strengths": "Possession lost 2.0 a game vs typical 3.7 (87th percentile); Good or best option taken 77.1% vs typical 68.7% (80th percentile)",
+   "work_on": "Passes completed 8.5 a game vs typical 13.6 (10th percentile); Through balls 1.1 a game vs typical 2.7 (12th percentile); Players beaten 1.2 a game vs typical 2.5 (14th percentile)"
+  },
+  {
+   "player": "MaDHooMaN",
+   "main_position": "forward",
+   "event_games": 26,
+   "strengths": "Good or best option taken 80.0% vs typical 68.7% (88th percentile); Possession lost 2.0 a game vs typical 3.7 (87th percentile)",
+   "work_on": "Passes completed 6.3 a game vs typical 13.6 (bottom 10%); Players beaten 1.0 a game vs typical 2.5 (10th percentile); Through balls 1.3 a game vs typical 2.7 (16th percentile)"
+  },
+  {
+   "player": "Muhammadfatir",
+   "main_position": "midfielder",
+   "event_games": 44,
+   "strengths": "none in the top quarter",
+   "work_on": "Passes completed 7.0 a game vs typical 15.7 (bottom 10%); Players beaten 1.1 a game vs typical 2.2 (15th percentile); Interceptions 1.3 a game vs typical 2.0 (24th percentile)"
+  },
+  {
+   "player": "MusaabChaudhary",
+   "main_position": "midfielder",
+   "event_games": 70,
+   "strengths": "Players beaten 4.4 a game vs typical 2.2 (87th percentile); Shots on target 1.4 a game vs typical 0.7 (80th percentile)",
+   "work_on": "Possession lost 6.5 a game vs typical 2.5 (bottom 10%); Good or best option taken 43.1% vs typical 56.9% (bottom 10%)"
+  },
+  {
+   "player": "ZebrasGraveyard",
+   "main_position": "forward",
+   "event_games": 51,
+   "strengths": "none in the top quarter",
+   "work_on": "Passes completed 8.0 a game vs typical 13.6 (bottom 10%); Shots on target 0.9 a game vs typical 2.2 (bottom 10%); Good or best option taken 51.6% vs typical 68.7% (bottom 10%)"
+  },
+  {
+   "player": "bxlter",
+   "main_position": "forward",
+   "event_games": 11,
+   "strengths": "Possession lost 1.7 a game vs typical 3.7 (top 10%)",
+   "work_on": "Passes completed 4.7 a game vs typical 13.6 (bottom 10%); Shots on target 0.6 a game vs typical 2.2 (bottom 10%); Players beaten 0.9 a game vs typical 2.5 (bottom 10%)"
+  }
+ ],
+ "missed_games_final": {
+  "snapshot": "2026-10-26T04:20:08Z",
+  "ea_games_since_first": 90,
+  "captured_since_first": 87,
+  "ea_W": 33,
+  "ea_D": 7,
+  "ea_L": 50,
+  "cap_W": 32,
+  "cap_D": 6,
+  "cap_L": 49,
+  "missing": 3
+ },
+ "model_review": {
+  "games_forecast": 82,
+  "results_called_model": 50,
+  "results_called_baseline": 43,
+  "gd_mae_model": 2.15,
+  "gd_mae_baseline": 2.46,
+  "expected_points": 89.4,
+  "actual_points": 96
+ },
+ "calibration": [
+  {
+   "model_win_chance": "under 30%",
+   "games": 32,
+   "average_forecast_pct": 19.0,
+   "actual_win_pct": 25.0
+  },
+  {
+   "model_win_chance": "30-50%",
+   "games": 46,
+   "average_forecast_pct": 37.5,
+   "actual_win_pct": 41.3
+  },
+  {
+   "model_win_chance": "50% or more",
+   "games": 4,
+   "average_forecast_pct": 55.6,
+   "actual_win_pct": 75.0
+  }
+ ],
+ "player_model": [
+  {
+   "stat": "Match rating",
+   "forecasts": 340,
+   "model_mae": 0.91,
+   "own_average_mae": 0.93
+  },
+  {
+   "stat": "Goals",
+   "forecasts": 340,
+   "model_mae": 0.69,
+   "own_average_mae": 0.69
+  },
+  {
+   "stat": "Assists",
+   "forecasts": 340,
+   "model_mae": 0.62,
+   "own_average_mae": 0.6
+  },
+  {
+   "stat": "Shots",
+   "forecasts": 340,
+   "model_mae": 1.43,
+   "own_average_mae": 1.45
+  },
+  {
+   "stat": "Passes made",
+   "forecasts": 340,
+   "model_mae": 4.56,
+   "own_average_mae": 4.61
+  },
+  {
+   "stat": "Tackles won",
+   "forecasts": 340,
+   "model_mae": 0.96,
+   "own_average_mae": 0.95
+  }
+ ],
+ "decisions_under_pressure": [
+  {
+   "factor": "Match type",
+   "group": "League",
+   "appearances": 245,
+   "games": 64,
+   "good_or_best_option_pct": 48.3,
+   "in_position_pct": 69.9,
+   "possession_lost_per_player_game": 4.08
+  },
+  {
+   "factor": "Match type",
+   "group": "Playoff",
+   "appearances": 50,
+   "games": 12,
+   "good_or_best_option_pct": 48.7,
+   "in_position_pct": 64.7,
+   "possession_lost_per_player_game": 3.58
+  },
+  {
+   "factor": "Opponent skill",
+   "group": "Weaker half (under 1498)",
+   "appearances": 152,
+   "games": 38,
+   "good_or_best_option_pct": 49.7,
+   "in_position_pct": 69.5,
+   "possession_lost_per_player_game": 3.79
+  },
+  {
+   "factor": "Opponent skill",
+   "group": "Stronger half (1498+)",
+   "appearances": 143,
+   "games": 38,
+   "good_or_best_option_pct": 46.8,
+   "in_position_pct": 68.3,
+   "possession_lost_per_player_game": 4.22
+  },
+  {
+   "factor": "Game in session",
+   "group": "Games 1-2",
+   "appearances": 66,
+   "games": 21,
+   "good_or_best_option_pct": 49.8,
+   "in_position_pct": 74.3,
+   "possession_lost_per_player_game": 4.91
+  },
+  {
+   "factor": "Game in session",
+   "group": "Games 3-4",
+   "appearances": 64,
+   "games": 19,
+   "good_or_best_option_pct": 48.1,
+   "in_position_pct": 74.8,
+   "possession_lost_per_player_game": 4.62
+  },
+  {
+   "factor": "Game in session",
+   "group": "Game 5 or later",
+   "appearances": 165,
+   "games": 36,
+   "good_or_best_option_pct": 47.8,
+   "in_position_pct": 64.5,
+   "possession_lost_per_player_game": 3.39
+  }
+ ],
+ "latest_model": {
+  "trainedAt": "2026-10-26T14:08:21Z",
+  "name": "Hierarchical Poisson / Negative Binomial",
+  "nMatches": 92,
+  "target": "goals for and against",
+  "modelMAE": 2.15,
+  "baselineMAE": 2.46,
+  "logLoss": 0.85,
+  "baselineLogLoss": 0.925,
+  "brier": 0.501,
+  "baselineBrier": 0.568,
+  "games": 82,
+  "walkForward": null,
+  "importance": null,
+  "scoreline": {
+   "modelMAE": 1.53,
+   "baselineMAE": 1.62
+  },
+  "playerEval": {
+   "r": {
+    "label": "Rating",
+    "modelMAE": 0.91,
+    "baselineMAE": 0.93
+   },
+   "g": {
+    "label": "Goals",
+    "modelMAE": 0.69,
+    "baselineMAE": 0.69
+   },
+   "a": {
+    "label": "Assists",
+    "modelMAE": 0.62,
+    "baselineMAE": 0.6
+   },
+   "sh": {
+    "label": "Shots",
+    "modelMAE": 1.43,
+    "baselineMAE": 1.45
+   },
+   "pm": {
+    "label": "Passes made",
+    "modelMAE": 4.56,
+    "baselineMAE": 4.61
+   },
+   "pa": {
+    "label": "Passes tried",
+    "modelMAE": 6.26,
+    "baselineMAE": 6.31
+   },
+   "tm": {
+    "label": "Tackles won",
+    "modelMAE": 0.96,
+    "baselineMAE": 0.95
+   }
+  },
+  "oppSkillMethod": {
+   "swingPerResult": 17.0,
+   "swingSource": "snapshots",
+   "perMatch": 72,
+   "fallback": 20,
+   "missing": 0,
+   "lateOver24h": 24
+  },
+  "selection": {
+   "date": "2026-10-23",
+   "games": 72,
+   "forecastGames": 62,
+   "method": "Each session predicted only from earlier sessions; each model's settings tuned only on earlier sessions too; opponent strength = estimated pre-game EA skill rating. Lower is better on every column.",
+   "results": [
+    {
+     "model": "Hierarchical Poisson / Negative Binomial",
+     "gdMAE": 2.13,
+     "logLoss": 0.873,
+     "brier": 0.515,
+     "scorelineMAE": 1.57,
+     "chosen": true
+    },
+    {
+     "model": "Bradley-Terry / Kalman filter",
+     "gdMAE": 2.25,
+     "logLoss": 0.883,
+     "brier": 0.531,
+     "scorelineMAE": 1.61
+    },
+    {
+     "model": "XGBoost (gradient-boosted trees)",
+     "gdMAE": 2.28,
+     "logLoss": 0.924,
+     "brier": 0.561,
+     "scorelineMAE": 1.65
+    },
+    {
+     "model": "Simple average",
+     "gdMAE": 2.34,
+     "logLoss": 0.924,
+     "brier": 0.561,
+     "scorelineMAE": 1.63
+    }
+   ],
+   "why": "Best on goal difference, win/draw/loss probabilities (log loss and Brier) and scorelines. XGBoost was no better than the simple average once the post-game rating leak was removed."
+  },
+  "effects": [
+   {
+    "f": "humans",
+    "attack": 0.048,
+    "defence": -0.003
+   },
+   {
+    "f": "oppHumans",
+    "attack": 0.019,
+    "defence": -0.091
+   },
+   {
+    "f": "oppSkill",
+    "attack": -0.116,
+    "defence": -0.165
+   },
+   {
+    "f": "playoff",
+    "attack": -0.025,
+    "defence": 0.039
+   },
+   {
+    "f": "defenders",
+    "attack": -0.024,
+    "defence": 0.036
+   },
+   {
+    "f": "midfielders",
+    "attack": 0.069,
+    "defence": -0.022
+   },
+   {
+    "f": "forwards",
+    "attack": 0.051,
+    "defence": -0.021
+   },
+   {
+    "f": "otherHumans",
+    "attack": 0.0,
+    "defence": -0.0
+   },
+   {
+    "f": "MusaabChaudhary",
+    "attack": 0.0,
+    "defence": -0.0
+   },
+   {
+    "f": "DisBeMamoon",
+    "attack": -0.069,
+    "defence": 0.007
+   },
+   {
+    "f": "ZebrasGraveyard",
+    "attack": 0.037,
+    "defence": 0.004
+   },
+   {
+    "f": "Muhammadfatir",
+    "attack": 0.082,
+    "defence": -0.008
+   },
+   {
+    "f": "FlorianSqwirtz",
+    "attack": 0.053,
+    "defence": 0.033
+   },
+   {
+    "f": "MaDHooMaN",
+    "attack": 0.085,
+    "defence": 0.068
+   },
+   {
+    "f": "bxlter",
+    "attack": -0.033,
+    "defence": -0.075
+   },
+   {
+    "f": "Gaffy_G",
+    "attack": 0.035,
+    "defence": -0.043
+   }
+  ]
+ }
+}

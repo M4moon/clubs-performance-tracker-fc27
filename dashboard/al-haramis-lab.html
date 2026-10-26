@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Al Haramis FC Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+/* Layout: matchday stats sheet. Kit-stripe header, tabbed sections, one filter row, cards only for players. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface2:#eef1f6;
+  --ink:#0f1a2e; --ink2:#46516a; --muted:#7a8398; --line:#e1e5ec; --axis:#c4cad6;
+  --accent:#c9580a; --accent-ink:#ffffff; --navy:#133975; --kit:#e76d10; --kit2:#090b0d;
+  --us:#eb6834; --them:#8f97a8; --pos:#2a78d6; --neg:#e34948;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --crit:#d03b3b;
+  --c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--c6:#008300;--c7:#4a3aa7;--c8:#e34948;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ring:rgba(15,26,46,.10);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b111d; --surface:#121a2a; --surface2:#1a2438;
+  --ink:#eef1f6; --ink2:#b6bdcc; --muted:#8a93a7; --line:#232e45; --axis:#36425c;
+  --accent:#f08a3c; --accent-ink:#0b111d; --navy:#7fa3e0;
+  --us:#d95926; --them:#6c7589; --pos:#3987e5; --neg:#e66767;
+  --good:#0ca30c; --good-ink:#2fc22f; --warn:#fab219; --crit:#e05252;
+  --c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#2e9a2e;--c7:#9085e9;--c8:#e66767;
+  --ring:rgba(255,255,255,.10); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b111d; --surface:#121a2a; --surface2:#1a2438;
+  --ink:#eef1f6; --ink2:#b6bdcc; --muted:#8a93a7; --line:#232e45; --axis:#36425c;
+  --accent:#f08a3c; --accent-ink:#0b111d; --navy:#7fa3e0;
+  --us:#d95926; --them:#6c7589; --pos:#3987e5; --neg:#e66767;
+  --good:#0ca30c; --good-ink:#2fc22f; --warn:#fab219; --crit:#e05252;
+  --c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#2e9a2e;--c7:#9085e9;--c8:#e66767;
+  --ring:rgba(255,255,255,.10); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:.01em}
+h2{font-size:1.55rem;font-weight:700;text-transform:uppercase}
+h3{font-size:1.15rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.num,.tab-num,td.n,th.n{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .ink2{color:var(--ink2)}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;color:var(--muted)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* header */
+.stripe{height:6px;background:linear-gradient(90deg,var(--kit) 0 55%,var(--kit2) 55% 80%,#133975 80%)}
+header.top{padding-block:22px 14px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end;justify-content:space-between}
+.crest{display:flex;gap:14px;align-items:center}
+.badge{width:46px;height:52px;flex:none;clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);background:linear-gradient(180deg,var(--kit) 0 60%,#133975 60%);display:grid;place-items:center;color:#fff;font:700 1.05rem var(--display);padding-bottom:10px}
+h1{font-size:clamp(2rem,5vw,2.9rem);font-weight:700;text-transform:uppercase;line-height:.95}
+.sub{color:var(--ink2);font-size:.92rem}
+.status-line{font-size:.85rem;color:var(--muted);text-align:right}
+.status-line b{color:var(--ink2);font-weight:600}
+
+/* nav + filters */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;padding-block:8px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;padding:8px 12px;font:600 1rem var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--surface2);border-radius:8px;padding:2px}
+.seg button{border:0;background:none;padding:5px 10px;border-radius:6px;font-size:.85rem;cursor:pointer;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--ring)}
+
+section.panel{padding-block:22px 6px;display:grid;gap:26px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.g22{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){.g22{grid-template-columns:1fr}}
+.block{min-width:0}
+.block-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.note{font-size:.84rem;color:var(--muted);max-width:68ch}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:grid;gap:2px;align-content:start}
+.kpi .v{font:700 2.1rem/1 var(--display)}
+.kpi .l{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .s{font-size:.84rem;color:var(--ink2)}
+
+/* form chips */
+.form{display:flex;gap:4px;flex-wrap:wrap}
+.chip{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:5px;font:700 .9rem var(--display);color:#fff}
+.chip.W{background:var(--good)} .chip.D{background:#8a8f99} .chip.L{background:var(--crit)}
+.chip.sm{min-width:22px;height:22px;font-size:.8rem}
+
+/* charts */
+.chart{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 8px 4px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font:12px var(--body);fill:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--ink2);padding:2px 8px 6px}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.8rem;padding:7px 9px;border-radius:7px;min-width:140px;z-index:3;line-height:1.35}
+.tip b{font-weight:600}
+.tip .row{display:flex;justify-content:space-between;gap:12px}
+
+/* split bars */
+.splits{display:grid;gap:8px}
+.split{display:grid;grid-template-columns:minmax(90px,150px) 1fr auto;gap:10px;align-items:center;font-size:.88rem}
+.track{height:12px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.fill{height:100%;background:var(--us);border-radius:0 4px 4px 0}
+.split .val{font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+
+/* insights */
+.insights{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.insights li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;justify-self:center}
+.dot.good{background:var(--good)} .dot.bad{background:var(--crit)} .dot.info{background:var(--navy)}
+
+/* tables */
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 .78rem var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);position:sticky;top:0;background:var(--surface)}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable[aria-sort]{color:var(--ink)}
+td.n,th.n{text-align:right}
+tbody tr:hover{background:var(--surface2)}
+tr.clickable{cursor:pointer}
+tr.detail td{background:var(--surface2);white-space:normal}
+.pname{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.sw{width:10px;height:10px;border-radius:3px;flex:none}
+
+/* player cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card-head h3{font-size:1.35rem;text-transform:none;letter-spacing:0;word-break:break-word}
+.score{text-align:right}
+.score .v{font:700 2.2rem/1 var(--display)}
+.score .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.76rem;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--ink2)}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 10px}
+.stat .v{font:600 1.25rem/1.1 var(--display)}
+.stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat .d{font-size:.74rem}
+.up{color:var(--good-ink)} .down{color:var(--crit)}
+.mini h4{margin:0 0 4px;font:600 .78rem var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mini ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.88rem}
+.mini.work li::marker{color:var(--crit)} .mini.strong li::marker{color:var(--good)}
+.breakdown{display:grid;gap:4px;font-size:.78rem;color:var(--ink2)}
+.bk{display:grid;grid-template-columns:90px 1fr 34px;gap:8px;align-items:center}
+.bk .track{height:6px}
+.bk .fill{background:var(--navy)}
+.spark{height:44px}
+
+/* player picker + breakdown */
+.picker{display:flex;gap:6px;flex-wrap:wrap}
+.picker button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.86rem;color:var(--ink2)}
+.picker button[aria-pressed="true"]{border-color:var(--accent);color:var(--ink);box-shadow:0 0 0 1px var(--accent)}
+.focus-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.focus-head h2{font-size:clamp(1.7rem,4vw,2.4rem);text-transform:none;letter-spacing:0;word-break:break-word}
+.focus-kpis{display:flex;flex-wrap:wrap;gap:6px 22px}
+.focus-kpis div{display:grid}
+.focus-kpis .v{font:700 1.7rem/1 var(--display)}
+.focus-kpis .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.area{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
+.area .chart{border:0;padding:0;background:none}
+.cmp{width:100%;font-size:.87rem}
+.cmp th,.cmp td{padding:5px 6px;border-bottom:1px solid var(--line);white-space:normal}
+.cmp th{position:static;background:none}
+.cmp tr:last-child td{border-bottom:0}
+.posstrip{display:flex;gap:3px;flex-wrap:wrap}
+.posstrip span{min-width:30px;height:28px;padding:0 4px;display:inline-grid;place-items:center;font:700 .8rem var(--display);background:var(--surface2);color:var(--ink);border-radius:4px;border-bottom:3px solid var(--them)}
+.linkbtn{background:none;border:0;padding:0;color:var(--navy);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font:inherit}
+.pill{display:inline-block;font:600 .66rem var(--body);text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:4px;background:var(--accent);color:var(--accent-ink);margin-left:6px;vertical-align:middle}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;z-index:20;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+
+/* coaching feedback: four buckets */
+.fb{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.fb .mini{background:var(--surface2);border-radius:10px;padding:10px 12px;border-left:4px solid var(--them)}
+.fb .well{border-left-color:var(--good)} .fb .more{border-left-color:var(--pos)} .fb .fix{border-left-color:var(--warn)} .fb .cut{border-left-color:var(--crit)}
+.fb .mini li::marker{color:var(--muted)}
+.card .fb{grid-template-columns:1fr 1fr}
+@media (max-width:420px){.card .fb{grid-template-columns:1fr}}
+/* last 10 vs previous 10 */
+.fc{font-variant-numeric:tabular-nums}
+.fc .arrow{font-size:.78rem;margin-left:4px}
+.fc td.prev{color:var(--muted)}
+.fc .flat{color:var(--muted)}
+
+/* compare tab */
+.pc{font:700 .78rem var(--body);margin-left:2px}
+.pc small{font-size:.62rem;font-weight:600}
+tr.us-row td{background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.pcmp td{font-variant-numeric:tabular-nums}
+
+/* roles */
+.role-name{width:100%;min-width:140px;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:5px 8px}
+.saved{font-size:.78rem;color:var(--good-ink)}
+
+.empty{background:var(--surface);border:1px dashed var(--axis);border-radius:12px;padding:28px;text-align:center;color:var(--ink2)}
+.empty h3{margin-bottom:6px}
+footer{margin-top:30px;font-size:.8rem;color:var(--muted);max-width:80ch}
+@media (max-width:640px){.status-line{text-align:left}.statgrid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:100px 1fr auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="stripe" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="crest">
+      <div class="badge" aria-hidden="true">AH</div>
+      <div>
+        <div class="eyebrow">FC 27 Pro Clubs · Club 387937</div>
+        <h1>Al Haramis FC</h1>
+        <div class="sub" id="hdrSub">Loading club data…</div>
+      </div>
+    </div>
+    <div class="status-line" id="statusLine">Connecting to the match store…</div>
+  </header>
+
+  <div class="bar">
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+      <button role="tab" data-tab="players" aria-selected="false">Players</button>
+      <button role="tab" data-tab="compare" aria-selected="false">Compare</button>
+      <button role="tab" data-tab="matches" aria-selected="false">Matches</button>
+      <button role="tab" data-tab="opponents" aria-selected="false">Opponents</button>
+      <button role="tab" data-tab="predict" aria-selected="false">Predictions</button>
+      <button role="tab" data-tab="review" aria-selected="false">Review</button>
+      <button role="tab" data-tab="roles" aria-selected="false">Roles</button>
+      <button role="tab" data-tab="season" aria-selected="false">Season</button>
+    </nav>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Match type" id="fType">
+        <button data-v="all" aria-pressed="true">All</button>
+        <button data-v="league" aria-pressed="false">League</button>
+        <button data-v="playoff" aria-pressed="false">Playoffs</button>
+      </div>
+      <div class="seg" role="group" aria-label="Range" id="fRange">
+        <button data-v="10" aria-pressed="false">Last 10</button>
+        <button data-v="30" aria-pressed="false">Last 30</button>
+        <button data-v="7d" aria-pressed="false">7 days</button>
+        <button data-v="all" aria-pressed="true">All time</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="panel" id="p-overview"></section>
+    <section class="panel" id="p-players" hidden></section>
+    <section class="panel" id="p-compare" hidden></section>
+    <section class="panel" id="p-matches" hidden></section>
+    <section class="panel" id="p-opponents" hidden></section>
+    <section class="panel" id="p-predict" hidden></section>
+    <section class="panel" id="p-review" hidden></section>
+    <section class="panel" id="p-roles" hidden></section>
+    <section class="panel" id="p-season" hidden></section>
+  </main>
+
+  <footer>
+    Data comes from EA's public Pro Clubs match records for league and playoff games. EA only keeps each club's most recent matches, and often publishes them hours late, so a scheduled collector saves new games here every hour from 10 PM to 3 AM Pakistan time each night, at 9 AM and 12 PM Monday to Thursday to catch late games, and every hour from 10 AM to 9 PM on Fridays to Sundays (always 19 minutes past). It also saves each opponent's club record and their players' lines, and retrains the prediction model whenever new games arrive, then rebuilds the Review tab, which replays every session with the model trained only on earlier games and checks its forecasts against what happened.This page updates itself when new games are saved, with no reload needed, and double-checks every 2 minutes while it's open. Games played before collection started can't be recovered; the Overview tab lists any that were missed. Team shot, pass and tackle figures cover human players only; goals include AI teammates. Impact score is this dashboard's own blend of EA rating, goal involvement, passing, defending and results, shown per player under "How the score is built". Minutes and idle seconds are EA's real-time counters for each player. EA's public feed has no pitch positions, heatmaps, minute-by-minute ratings or time on the ball, so those can't be shown. Match actions (interceptions, possession, dribbles, positioning prompts and decision feedback) come from EA's event counters, decoded by the community research at github.com/Interactive-63/eafc-pro-clubs-api-research; EA has no passes-received counter.
+  </footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const S = { matches: [], snaps: [], roles: {}, meta: null, codes: {}, bench: {}, cmpGroup: "div", cmpSort: "sr", openClub: null, loaded: false, db: null, canWrite: null,
+  f: { type: "all", range: "all" }, tab: "overview", sort: { key: "impact", dir: -1 }, openMatch: null, focus: null, newIds: new Set(),
+  opps: {}, oppm: {}, model: null, modelRuns: [], openOpp: null, oppSort: "last", predN: 10, predSet: "best", lineSize: null };
+try { const n = +localStorage.getItem("ah.predN"); if (n) S.predN = n; } catch (e) {}
+try { S.focus = localStorage.getItem("ah.focus") || null; const g = localStorage.getItem("ah.cmp"); if (g) S.cmpGroup = g; } catch (e) {}
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sum = (a, f) => a.reduce((t, x) => t + (f ? f(x) : x || 0), 0);
+const avg = (a, f) => a.length ? sum(a, f) / a.length : null;
+const pct = (n, d) => d ? 100 * n / d : null;
+const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
+const f1 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 10) / 10).toFixed(1);
+const f2 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 100) / 100).toFixed(2);
+const f0 = v => v == null || isNaN(v) ? "–" : String(Math.round(v));
+const fp = v => v == null || isNaN(v) ? "–" : Math.round(v) + "%";
+const PTS = { W: 3, D: 1, L: 0 };
+const dateFmt = ts => new Date(ts * 1000).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const dayFmt = ts => new Date(ts * 1000).toLocaleDateString([], { month: "short", day: "numeric" });
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- data shaping ---------- */
+function recvCode() { const c = S.codes && S.codes.recv; return c ? String(c) : null; }
+function recvOf(p) { const c = recvCode(); return c && p.ev ? (+p.ev[c] || 0) : null; }
+function roleName(arch) { const r = S.roles[String(arch)]; return r && r.name ? r.name : "Role " + arch; }
+
+function enrich(all) {
+  // records from the store are frozen: work on copies, never on the originals
+  const ms = all.map(m => ({ ...m })).sort((a, b) => a.ts - b.ts);
+  let sess = 0, gi = 0, prev = null;
+  ms.forEach(m => {
+    if (!prev || m.ts - prev.ts > 2700) { sess++; gi = 0; }
+    gi++; m._sess = sess; m._game = gi; prev = m;
+    m._pts = PTS[m.res] ?? 0; m._gd = m.gf - m.ga;
+    m._players = (m.players || []).map(p => ({ ...p, m: m.id }));
+  });
+  // player colour follows first appearance, so it never changes as matches are added
+  const order = [];
+  ms.forEach(m => m._players.forEach(p => { if (!order.includes(p.p)) order.push(p.p); }));
+  S.colorOf = name => { const i = order.indexOf(name); return i >= 0 && i < 8 ? `var(--c${i + 1})` : "var(--them)"; };
+  return ms;
+}
+
+function filtered() {
+  let ms = S.all;
+  if (S.f.type !== "all") ms = ms.filter(m => m.type === S.f.type);
+  if (S.f.range === "10") ms = ms.slice(-10);
+  else if (S.f.range === "30") ms = ms.slice(-30);
+  else if (S.f.range === "7d") { const cut = Date.now() / 1000 - 7 * 86400; ms = ms.filter(m => m.ts >= cut); }
+  return ms;
+}
+
+function teamStats(ms) {
+  const n = ms.length; const c = r => ms.filter(m => m.res === r).length;
+  const t = {
+    n, W: c("W"), D: c("D"), L: c("L"), pts: sum(ms, m => m._pts),
+    gf: sum(ms, m => m.gf), ga: sum(ms, m => m.ga),
+    sh: sum(ms, m => m.us.shots), osh: sum(ms, m => m.them.shots),
+    pm: sum(ms, m => m.us.pm), pa: sum(ms, m => m.us.pa), opm: sum(ms, m => m.them.pm), opa: sum(ms, m => m.them.pa),
+    tm: sum(ms, m => m.us.tm), ta: sum(ms, m => m.us.ta), otm: sum(ms, m => m.them.tm), ota: sum(ms, m => m.them.ta),
+    hg: sum(ms, m => m.us.hg ?? sum(m._players, p => p.g)),
+    cs: ms.filter(m => m.ga === 0).length,
+  };
+  t.ppg = n ? t.pts / n : null; t.gd = t.gf - t.ga;
+  t.conv = pct(t.gf, t.sh); t.oconv = pct(t.ga, t.osh);
+  t.passPct = pct(t.pm, t.pa); t.opassPct = pct(t.opm, t.opa);
+  t.share = pct(t.pa, t.pa + t.opa);
+  t.tklPct = pct(t.tm, t.ta); t.otklPct = pct(t.otm, t.ota);
+  t.aiGoals = t.gf - t.hg;
+  return t;
+}
+
+function aggPlayer(apps, ms) {
+  const byId = Object.fromEntries(ms.map(m => [m.id, m]));
+  const n = apps.length;
+  const a = {
+    n, g: sum(apps, p => p.g), a: sum(apps, p => p.a), sh: sum(apps, p => p.sh), pa: sum(apps, p => p.pa), pm: sum(apps, p => p.pm),
+    ta: sum(apps, p => p.ta), tm: sum(apps, p => p.tm), mom: sum(apps, p => p.mom), red: sum(apps, p => p.red || 0),
+    rating: avg(apps, p => p.r), min: sum(apps, p => Math.min(p.sec || 0, 1500)) / 60, idle: sum(apps, p => p.idle || 0),
+    W: apps.filter(p => byId[p.m]?.res === "W").length, D: apps.filter(p => byId[p.m]?.res === "D").length,
+  };
+  a.L = n - a.W - a.D; a.ppg = n ? (a.W * 3 + a.D) / n : null;
+  a.gi = n ? (a.g + a.a) / n : null; a.gpg = n ? a.g / n : null; a.apg = n ? a.a / n : null;
+  a.shpg = n ? a.sh / n : null; a.conv = pct(a.g, a.sh); a.ppgm = n ? a.pa / n : null; a.passPct = pct(a.pm, a.pa);
+  a.tapg = n ? a.ta / n : null; a.tmpg = n ? a.tm / n : null; a.tklPct = pct(a.tm, a.ta); a.momRate = n ? a.mom / n : null;
+  a.winPct = pct(a.W, n);
+  // time on pitch and idle time (EA real-time seconds, capped at 1500 a game)
+  a.secTot = sum(apps, p => Math.min(p.sec || 0, 1500));
+  a.minpg = n ? a.min / n : null; a.idlepg = n ? a.idle / n : null; a.idlePct = pct(a.idle, a.secTot);
+  a.pmpg = n ? a.pm / n : null; a.misspg = n ? (a.pa - a.pm) / n : null;
+  // passes received: only once the EA event code has been confirmed in meta/codes
+  const rc = recvCode(), ra = rc ? apps.filter(p => p.ev) : [];
+  a.recvN = ra.length; a.recv = sum(ra, p => +p.ev[rc] || 0); a.recvpg = ra.length ? a.recv / ra.length : null;
+  a.gdOn = n ? sum(apps, p => byId[p.m]?._gd ?? 0) / n : null;
+  const parts = {
+    "EA rating": 35 * clamp(((a.rating ?? 5) - 5) / 5),
+    "Goals + assists": 20 * clamp((a.gi ?? 0) / 1.5),
+    "Passing": 15 * clamp(((a.passPct ?? 50) - 50) / 40),
+    "Defending": 5 * clamp((a.tklPct ?? 0) / 50) + 5 * clamp((a.tmpg ?? 0) / 3),
+    "Results": 15 * clamp((a.ppg ?? 0) / 3),
+    "Man of the match": 5 * clamp((a.momRate ?? 0) / 0.5),
+  };
+  a.parts = parts; a.impact = sum(Object.values(parts));
+  return a;
+}
+
+function players(ms) {
+  const apps = ms.flatMap(m => m._players);
+  const names = [...new Set(apps.map(p => p.p))];
+  const squad = aggPlayer(apps, ms);
+  const roleBase = {};
+  [...new Set(apps.map(p => p.arch))].forEach(r => roleBase[r] = aggPlayer(apps.filter(p => p.arch === r), ms));
+  return names.map(name => {
+    const mine = apps.filter(p => p.p === name);
+    const st = aggPlayer(mine, ms);
+    const roleCounts = {}; mine.forEach(p => roleCounts[p.arch] = (roleCounts[p.arch] || 0) + 1);
+    const posCounts = {}; mine.forEach(p => posCounts[p.pos] = (posCounts[p.pos] || 0) + 1);
+    const mainRole = +Object.entries(roleCounts).sort((x, y) => y[1] - x[1])[0][0];
+    const peers = apps.filter(p => p.arch === mainRole && p.p !== name);
+    const base = peers.length >= 3 ? aggPlayer(peers, ms) : squad;
+    const baseLabel = peers.length >= 3 ? roleName(mainRole) + " teammates" : "squad average";
+    const byRole = Object.keys(roleCounts).map(r => ({ arch: +r, n: roleCounts[r], st: aggPlayer(mine.filter(p => p.arch === +r), ms) }));
+    return { name, st, mine, roleCounts, posCounts, mainRole, base, baseLabel, byRole };
+  });
+}
+
+/* ---------- last 10 vs previous 10 ---------- */
+// uses every saved game of the chosen match type, whatever the date range filter says
+function formSplit(name) {
+  const ms = S.f.type === "all" ? S.all : S.all.filter(m => m.type === S.f.type);
+  const apps = ms.flatMap(m => m._players.filter(p => p.p === name));
+  const lastA = apps.slice(-10), prevA = apps.slice(-20, -10);
+  return { last: aggPlayer(lastA, ms), prev: aggPlayer(prevA, ms), nl: lastA.length, np: prevA.length };
+}
+function formRows() {
+  const r = [
+    ["rating", "Avg rating", f1, 1], ["gpg", "Goals / gm", f2, 1], ["apg", "Assists / gm", f2, 1], ["shpg", "Shots / gm", f1, 1], ["conv", "Shot conversion", fp, 1],
+    ["pmpg", "Passes made / gm", f1, 1], ["misspg", "Passes missed / gm", f1, -1], ["passPct", "Pass accuracy", fp, 1]];
+  if (recvCode()) r.push(["recvpg", "Passes received / gm", f1, 1]);
+  r.push(["tmpg", "Tackles won / gm", f1, 1], ["tapg", "Tackles tried / gm", f1, 0], ["tklPct", "Tackle success", fp, 1],
+    ["minpg", "Minutes / gm", f1, 0], ["idlepg", "Idle seconds / gm", f0, -1], ["winPct", "Win rate", fp, 1], ["mom", "Man of the match", f0, 1]);
+  return r;
+}
+function arrow(l, p, fmt, better) {
+  if (l == null || p == null || isNaN(l) || isNaN(p)) return "";
+  if (fmt(l) === fmt(p)) return `<span class="arrow flat">=</span>`;
+  const up = l > p, cls = better === 0 ? "flat" : (up ? 1 : -1) * better > 0 ? "up" : "down";
+  return `<span class="arrow ${cls}">${up ? "▲" : "▼"}</span>`;
+}
+
+/* ---------- coaching feedback ---------- */
+function coaching(pl) {
+  const s = pl.st, b = pl.base, minN = s.n >= 3, bl = pl.baseLabel;
+  const well = [], more = [], fix = [], cut = [];
+  const atk = (pl.posCounts.forward || 0) >= (pl.posCounts.midfielder || 0) + (pl.posCounts.defender || 0);
+  const fs = formSplit(pl.name), L = fs.last, P = fs.prev, cmpOk = fs.np >= 3;
+  // did well
+  if (s.pa >= 15 && s.passPct != null && b.passPct != null && s.passPct >= b.passPct + 5) well.push(`Kept the ball: ${fp(s.passPct)} passing vs ${fp(b.passPct)} for ${bl}.`);
+  if (s.ta >= 5 && s.tklPct >= 40) well.push(`Won ${fp(s.tklPct)} of tackles (${s.tm} of ${s.ta}).`);
+  if (s.sh >= 3 && s.conv >= 45) well.push(`Clinical: ${s.g} goals from ${s.sh} shots.`);
+  if (s.gi != null && s.gi >= 1) well.push(`${f2(s.gi)} goals + assists a game.`);
+  if (minN && s.momRate >= 0.25) well.push(`Man of the match in ${s.mom} of ${s.n} games.`);
+  if (cmpOk && L.rating >= P.rating + 0.3) well.push(`Rating up from ${f1(P.rating)} to ${f1(L.rating)} over the last ${fs.nl} games.`);
+  if (cmpOk && L.passPct != null && P.passPct != null && L.passPct >= P.passPct + 5) well.push(`Passing up from ${fp(P.passPct)} to ${fp(L.passPct)} in the last ${fs.nl}.`);
+  // do more of
+  if (s.sh >= 2 && s.conv >= 35 && b.shpg != null && s.shpg < b.shpg) more.push(`Shoot more: you score ${fp(s.conv)} of your shots but take ${f1(s.shpg)} a game (${bl}: ${f1(b.shpg)}).`);
+  if (s.passPct != null && b.passPct != null && s.passPct >= b.passPct && b.ppgm && s.ppgm < 0.85 * b.ppgm) more.push(`Get on the ball: accurate passer but only ${f1(s.ppgm)} attempts a game vs ${f1(b.ppgm)}.`);
+  if (s.recvpg != null && b.recvpg && s.recvpg < 0.8 * b.recvpg) more.push(`Show for the ball: you receive ${f1(s.recvpg)} passes a game vs ${f1(b.recvpg)}.`);
+  if (s.ta >= 3 && s.tklPct >= 35 && b.tapg != null && s.tapg < b.tapg) more.push(`Press more: you win ${fp(s.tklPct)} of tackles but try only ${f1(s.tapg)} a game.`);
+  if (minN && atk && s.gi != null && s.gi < 0.5) more.push(`Attack the box: ${f2(s.gi)} goals + assists a game up front. Make runs off the last defender.`);
+  // improve
+  const lungeVolume = b.tapg != null && s.tapg > b.tapg;
+  const shotVolume = b.shpg != null && s.shpg > b.shpg;
+  if (s.pa >= 15 && s.passPct != null && (s.passPct < 65 || (b.passPct != null && s.passPct <= b.passPct - 5))) fix.push(b.passPct != null && s.passPct <= b.passPct - 5 ? `Pass accuracy ${fp(s.passPct)} vs ${fp(b.passPct)} for ${bl}. Take the simple option under pressure.` : `Only ${fp(s.passPct)} of passes find a teammate. Aim for 75%+ by playing the simple ball under pressure.`);
+  if (s.ta >= 5 && s.tklPct < 25 && !lungeVolume) fix.push(`Tackle timing: ${s.tm} of ${s.ta} won. Jockey, then challenge on the heavy touch.`);
+  if (s.sh >= 4 && s.conv < 25 && !shotVolume) fix.push(`Finishing: ${s.g} from ${s.sh} shots. Work a better angle before shooting.`);
+  if (cmpOk && L.rating <= P.rating - 0.3) fix.push(`Rating down from ${f1(P.rating)} to ${f1(L.rating)} over the last ${fs.nl} games.`);
+  if (cmpOk && L.passPct != null && P.passPct != null && L.passPct <= P.passPct - 5) fix.push(`Passing down from ${fp(P.passPct)} to ${fp(L.passPct)} in the last ${fs.nl}.`);
+  // cut back on
+  if (s.misspg != null && s.misspg >= 4 && b.misspg != null && s.misspg > 1.2 * b.misspg) cut.push(`Risky passes: ${f1(s.misspg)} misplaced a game vs ${f1(b.misspg)} for ${bl}.`);
+  if (s.ta >= 5 && s.tklPct < 25 && lungeVolume) cut.push(`Lunging: ${f1(s.tapg)} tackle attempts a game and only ${fp(s.tklPct)} won.`);
+  if (s.sh >= 4 && s.conv < 20 && shotVolume) cut.push(`Low-percentage shots: ${f1(s.shpg)} a game, ${fp(s.conv)} go in.`);
+  if (s.idlepg != null && s.idlepg >= 30) cut.push(`Idle time: ${f0(s.idlepg)} seconds a game not controlling your player (${fp(s.idlePct)} of time on the pitch).`);
+  if (s.red) cut.push(`Reckless challenges: ${s.red} red card${s.red > 1 ? "s" : ""}.`);
+  const ec = evCoach(pl.name, pl.mine);
+  well.push(...ec.well); more.push(...ec.more); fix.unshift(...ec.fix); cut.push(...ec.cut);
+  const none = minN ? "Nothing stands out yet." : "Not enough games yet.";
+  [well, more, fix, cut].forEach(a => { if (!a.length) a.push(none); });
+  return { well: well.slice(0, 4), more: more.slice(0, 4), fix: fix.slice(0, 4), cut: cut.slice(0, 4) };
+}
+function fbHtml(c) {
+  const box = (cls, h, a) => `<div class="mini ${cls}"><h4>${h}</h4><ul>${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  return `<div class="fb">${box("well", "Did this well", c.well)}${box("more", "Do this more", c.more)}${box("fix", "Improve this", c.fix)}${box("cut", "Cut back on this", c.cut)}</div>`;
+}
+function teamInsights(ms, t) {
+  const out = [];
+  if (ms.length < 3) return [{ k: "info", t: "Insights appear once at least 3 matches are stored." }];
+  if (t.share != null) out.push({ k: t.share >= 50 ? "good" : "bad", t: `You attempt ${fp(t.share)} of the passes in your games, so you're ${t.share >= 50 ? "usually the side with the ball" : "usually the side without the ball"}.` });
+  if (t.sh && t.osh) out.push({ k: t.sh >= t.osh ? "good" : "bad", t: `Shots: ${f1(t.sh / t.n)} per game for, ${f1(t.osh / t.n)} against. ${t.sh >= t.osh ? "You create more than you allow." : "Opponents are getting more shots than you."}` });
+  if (t.oconv != null && t.conv != null) out.push({ k: t.oconv > t.conv ? "bad" : "good", t: `Opponents score ${fp(t.oconv)} of their shots; you score ${fp(t.conv)} of yours. ${t.oconv > t.conv + 10 ? "Chances against you are higher quality, so the problem is the space you allow, not the number of shots." : ""}` });
+  if (t.tklPct != null) out.push({ k: t.tklPct >= (t.otklPct ?? 0) ? "good" : "bad", t: `Tackle success ${fp(t.tklPct)} (${t.tm} of ${t.ta}) vs opponents' ${fp(t.otklPct)}. ${t.tklPct < 25 ? "Too many lunges: about 3 in 4 challenges miss." : ""}` });
+  if (t.gf) out.push({ k: "info", t: `${t.aiGoals} of ${t.gf} goals (${fp(pct(t.aiGoals, t.gf))}) came from AI teammates.` });
+  const bySize = groupPpg(ms, m => m.humans + " players");
+  const sizes = Object.entries(bySize).filter(([, v]) => v.n >= 2).sort((a, b) => b[1].ppg - a[1].ppg);
+  if (sizes.length > 1) out.push({ k: "info", t: `Best results with ${sizes[0][0]} (${f2(sizes[0][1].ppg)} pts/game over ${sizes[0][1].n}); worst with ${sizes.at(-1)[0]} (${f2(sizes.at(-1)[1].ppg)}).` });
+  const early = ms.filter(m => m._game <= 2), late = ms.filter(m => m._game >= 4);
+  if (early.length >= 3 && late.length >= 3) { const e = avg(early, m => m._pts), l = avg(late, m => m._pts); out.push({ k: l < e - 0.3 ? "bad" : "info", t: `Games 1–2 of a session: ${f2(e)} pts/game. Game 4 onwards: ${f2(l)}. ${l < e - 0.3 ? "Results drop off in long sessions." : ""}` }); }
+  return out;
+}
+
+function groupPpg(ms, keyFn) {
+  const g = {}; ms.forEach(m => { const k = keyFn(m); (g[k] ||= []).push(m); });
+  const out = {}; Object.entries(g).forEach(([k, a]) => out[k] = { n: a.length, ppg: avg(a, m => m._pts), gd: avg(a, m => m._gd), W: a.filter(m => m.res === "W").length });
+  return out;
+}
+
+function rolling(vals, w = 5) { return vals.map((_, i) => { const s = vals.slice(Math.max(0, i - w + 1), i + 1).filter(v => v != null); return s.length ? avg(s) : null; }); }
+
+/* ---------- charts ---------- */
+function niceScale(lo, hi, count = 4) {
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const step0 = (hi - lo) / count, mag = 10 ** Math.floor(Math.log10(step0)), e = step0 / mag;
+  const step = (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+  const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step, ticks = [];
+  for (let v = a; v <= b + step / 2; v += step) ticks.push(+v.toFixed(6));
+  return { lo: a, hi: b, ticks };
+}
+const charts = [];
+function mount(host, draw) { charts.push({ host, draw }); draw(); }
+function redrawAll() { charts.forEach(c => document.body.contains(c.host) && c.draw()); }
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(redrawAll, 150); });
+
+function lineChart(host, cfg) {
+  mount(host, () => {
+    const W = Math.max(260, host.clientWidth - 16), H = cfg.h || 180, m = { l: 34, r: 12, t: 10, b: 24 };
+    const n = cfg.labels.length, vals = cfg.series.flatMap(s => s.values).filter(v => v != null);
+    if (!vals.length) { host.innerHTML = `<div class="note" style="padding:20px">No data in this range.</div>`; return; }
+    const sc = niceScale(cfg.min ?? Math.min(...vals), cfg.max ?? Math.max(...vals));
+    const x = i => n === 1 ? m.l + (W - m.l - m.r) / 2 : m.l + i * (W - m.l - m.r) / (n - 1);
+    const y = v => m.t + (H - m.t - m.b) * (1 - (v - sc.lo) / (sc.hi - sc.lo));
+    const fmt = cfg.fmt || f1;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(cfg.title || "")}">`;
+    sc.ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" style="stroke:var(--line);stroke-width:1"/><text x="${m.l - 6}" y="${y(t) + 4}" text-anchor="end">${fmt(t)}</text>`; });
+    const every = Math.max(1, Math.ceil(n / 6));
+    cfg.labels.forEach((l, i) => { if (i % every === 0 || i === n - 1) s += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle">${esc(l)}</text>`; });
+    if (cfg.ref != null) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(cfg.ref)}" y2="${y(cfg.ref)}" style="stroke:var(--axis);stroke-dasharray:3 3"/>`;
+    cfg.series.forEach(se => {
+      let d = "", pen = false;
+      se.values.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); pen = true; });
+      s += `<path d="${d}" style="fill:none;stroke:${se.color};stroke-width:2;stroke-linejoin:round;stroke-linecap:round;${se.dash ? "stroke-dasharray:4 3" : ""}"/>`;
+      const li = se.values.map((v, i) => v == null ? -1 : i).filter(i => i >= 0).at(-1);
+      if (li != null && li >= 0) s += `<circle cx="${x(li)}" cy="${y(se.values[li])}" r="4" style="fill:${se.color};stroke:var(--surface);stroke-width:2"/>`;
+    });
+    s += `<line class="xh" y1="${m.t}" y2="${H - m.b}" style="stroke:var(--axis);stroke-width:1;opacity:0"/><g class="dots"></g>`;
+    s += `<rect x="${m.l - 10}" y="0" width="${W - m.l - m.r + 20}" height="${H}" style="fill:transparent"/></svg>`;
+    host.innerHTML = (cfg.series.length > 1 ? `<div class="legend">${cfg.series.map(se => `<span><i style="background:${se.color}"></i>${esc(se.name)}</span>`).join("")}</div>` : "") + s + `<div class="tip" hidden></div>`;
+    const svg = $("svg", host), tip = $(".tip", host), xh = $(".xh", host), dots = $(".dots", host);
+    const move = ev => {
+      const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+      const i = n === 1 ? 0 : Math.round(clamp((px - m.l) / ((W - m.l - m.r) / (n - 1)), 0, n - 1));
+      xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.style.opacity = 1;
+      dots.innerHTML = cfg.series.map(se => se.values[i] == null ? "" : `<circle cx="${x(i)}" cy="${y(se.values[i])}" r="4" style="fill:${se.color};stroke:var(--surface);stroke-width:2"/>`).join("");
+      tip.innerHTML = `<b>${esc(cfg.tipTitle ? cfg.tipTitle(i) : cfg.labels[i])}</b>` + cfg.series.map(se => `<div class="row"><span>${esc(se.name)}</span><span>${se.values[i] == null ? "–" : fmt(se.values[i])}</span></div>`).join("") + (cfg.tipExtra ? cfg.tipExtra(i) : "");
+      tip.hidden = false;
+      const hx = x(i) * r.width / W + 8; const left = hx + 170 > host.clientWidth ? hx - 186 : hx + 6;
+      tip.style.left = Math.max(4, left) + "px"; tip.style.top = "36px";
+    };
+    svg.addEventListener("pointermove", move); svg.addEventListener("pointerdown", move);
+    svg.addEventListener("pointerleave", () => { tip.hidden = true; xh.style.opacity = 0; dots.innerHTML = ""; });
+  });
+}
+
+function barChart(host, cfg) {
+  mount(host, () => {
+    const W = Math.max(260, host.clientWidth - 16), H = cfg.h || 170, m = { l: 34, r: 10, t: 10, b: 24 };
+    const n = cfg.values.length;
+    if (!n) { host.innerHTML = `<div class="note" style="padding:20px">No data in this range.</div>`; return; }
+    const sc = niceScale(Math.min(0, ...cfg.values), Math.max(0, ...cfg.values, 1));
+    const bw = (W - m.l - m.r) / n, gap = Math.min(6, bw * 0.25);
+    const y = v => m.t + (H - m.t - m.b) * (1 - (v - sc.lo) / (sc.hi - sc.lo));
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(cfg.title || "")}">`;
+    sc.ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" style="stroke:${t === 0 ? "var(--axis)" : "var(--line)"};stroke-width:1"/><text x="${m.l - 6}" y="${y(t) + 4}" text-anchor="end">${t}</text>`; });
+    cfg.values.forEach((v, i) => {
+      const x0 = m.l + i * bw + gap / 2, w = Math.max(2, bw - gap), y0 = y(0);
+      if (v === 0) s += `<rect x="${x0}" y="${y0 - 1.5}" width="${w}" height="3" rx="1" style="fill:var(--them)"/>`;
+      else { const yt = y(Math.max(v, 0)), h = Math.abs(y(v) - y0), r = Math.min(4, w / 2, h / 2);
+        const c = v > 0 ? "var(--pos)" : "var(--neg)";
+        s += v > 0 ? `<path d="M${x0} ${y0}V${yt + r}Q${x0} ${yt} ${x0 + r} ${yt}H${x0 + w - r}Q${x0 + w} ${yt} ${x0 + w} ${yt + r}V${y0}Z" style="fill:${c}"/>`
+                   : `<path d="M${x0} ${y0}V${y0 + h - r}Q${x0} ${y0 + h} ${x0 + r} ${y0 + h}H${x0 + w - r}Q${x0 + w} ${y0 + h} ${x0 + w} ${y0 + h - r}V${y0}Z" style="fill:${c}"/>`; }
+    });
+    const every = Math.max(1, Math.ceil(n / 6));
+    cfg.labels.forEach((l, i) => { if (i % every === 0 || i === n - 1) s += `<text x="${m.l + i * bw + bw / 2}" y="${H - 6}" text-anchor="middle">${esc(l)}</text>`; });
+    s += `<rect x="${m.l}" y="0" width="${W - m.l - m.r}" height="${H}" style="fill:transparent"/></svg><div class="tip" hidden></div>`;
+    host.innerHTML = s;
+    const svg = $("svg", host), tip = $(".tip", host);
+    const move = ev => {
+      const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+      const i = Math.floor(clamp((px - m.l) / bw, 0, n - 0.001));
+      tip.innerHTML = cfg.tip(i); tip.hidden = false;
+      const hx = (m.l + i * bw + bw / 2) * r.width / W; const left = hx + 180 > host.clientWidth ? hx - 186 : hx + 10;
+      tip.style.left = Math.max(4, left) + "px"; tip.style.top = "20px";
+    };
+    svg.addEventListener("pointermove", move); svg.addEventListener("pointerdown", move);
+    svg.addEventListener("pointerleave", () => tip.hidden = true);
+  });
+}
+
+function splitBars(rows, max, fmt) {
+  return `<div class="splits">${rows.map(r => `<div class="split"><span>${esc(r.label)}</span><div class="track" title="${esc(r.label)}: ${fmt(r.v)}"><div class="fill" style="width:${max ? 100 * clamp(r.v / max) : 0}%"></div></div><span class="val">${fmt(r.v)} <span class="muted">· ${r.n} gm</span></span></div>`).join("")}</div>`;
+}
+
+/* ---------- views ---------- */
+function emptyState(msg) {
+  if (S.loadError && !S.loaded) return `<div class="empty"><h3>Matches didn't load</h3><p>${esc(S.loadError)}</p></div>`;
+  if (!S.loaded) return `<div class="empty"><h3>Loading matches…</h3><p>${S.slow ? "This is taking longer than usual. If nothing appears soon, reload the page." : "Fetching your club's saved games."}</p></div>`;
+  if (!msg && S.noStore) msg = "This view can't reach the match store, so nothing can load. Open the page on claude.ai while signed in to the account that owns it, or ask the owner to share it with you.";
+  if (!msg && S.all && S.all.length) {
+    const parts = []; if (S.f.type !== "all") parts.push(S.f.type === "playoff" ? "Playoffs only" : "League only");
+    if (S.f.range !== "all") parts.push({ "10": "Last 10", "30": "Last 30", "7d": "Last 7 days" }[S.f.range]);
+    return `<div class="empty"><h3>No matches with these filters</h3><p>${S.all.length} matches are saved, but none match ${esc(parts.join(" · "))}.</p><p><button type="button" class="showall" style="border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:6px 14px;cursor:pointer">Show all matches</button></p></div>`;
+  }
+  return `<div class="empty"><h3>No matches saved yet</h3><p>${msg || "Matches appear here after the scheduled collector saves them from EA."}</p></div>`;
+}
+document.addEventListener("click", e => { if (e.target.closest && e.target.closest(".showall")) { S.f = { type: "all", range: "all" };
+  ["#fType", "#fRange"].forEach(id => $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === "all"))));
+  try { localStorage.setItem("ah.f", JSON.stringify(S.f)); } catch (err) {} render(); } });
+
+/* games EA counted but the collector never saw */
+function gaps() {
+  // EA's club record (gamesPlayed, W/D/L) counts league and playoff games. Compare its growth since the first snapshot
+  // with every game saved over the same time. Some snapshots are EA's stale cached copy and undercount, so only a new
+  // high in the shortfall counts as a missed game, placed between the last snapshot at the old level and this one.
+  const sn = S.snaps.filter(s => s.takenAt).slice().sort((a, b) => a.takenAt < b.takenAt ? -1 : 1), out = [];
+  if (sn.length < 2) return out;
+  const b0 = sn[0], t0 = Date.parse(b0.takenAt) / 1000;
+  const rows = sn.map(s => { const t = Date.parse(s.takenAt) / 1000, got = S.all.filter(m => m.ts > t0 && m.ts <= t), c = r => got.filter(m => m.res === r).length;
+    return { t, n: (s.gamesPlayed - b0.gamesPlayed) - got.length, w: (s.wins - b0.wins) - c("W"), d: (s.ties - b0.ties) - c("D"), l: (s.losses - b0.losses) - c("L") }; });
+  let lev = rows[0];
+  for (const r of rows.slice(1)) {
+    if (r.n > lev.n) { out.push({ n: r.n - lev.n, w: Math.max(0, r.w - lev.w), d: Math.max(0, r.d - lev.d), l: Math.max(0, r.l - lev.l), from: lev.t, to: r.t }); lev = r; }
+    else if (r.n === lev.n) lev = r;
+  }
+  return out;
+}
+function gapHtml(g) {
+  const res = [g.w && `${g.w} win${g.w > 1 ? "s" : ""}`, g.d && `${g.d} draw${g.d > 1 ? "s" : ""}`, g.l && `${g.l} loss${g.l > 1 ? "es" : ""}`].filter(Boolean).join(", ");
+  return `${g.n} game${g.n > 1 ? "s" : ""} played between ${esc(dateFmt(g.from))} and ${esc(dateFmt(g.to))} ${g.n > 1 ? "were" : "was"} gone from EA before the collector could save ${g.n > 1 ? "them" : "it"}${res ? ` (${res})` : ""}. ${g.n > 1 ? "They count" : "It counts"} in EA's season record but not in these charts.`;
+}
+
+function renderOverview(ms) {
+  const el = $("#p-overview"); charts.length = 0;
+  if (!ms.length) { el.innerHTML = emptyState(); return; }
+  const t = teamStats(ms), snap = S.snaps[0];
+  const labels = ms.map(m => dayFmt(m.ts));
+  const gp = gaps();
+  el.innerHTML = `
+  ${gp.length ? `<ul class="insights">${gp.map(g => `<li><span class="dot bad"></span><span>${gapHtml(g)}</span></li>`).join("")}</ul>` : ""}
+  <div class="kpis">
+    <div class="kpi"><span class="l">Record</span><span class="v num">${t.W}-${t.D}-${t.L}</span><span class="s">${t.n} matches · W-D-L</span></div>
+    <div class="kpi"><span class="l">Points per game</span><span class="v num">${f2(t.ppg)}</span><span class="s">${t.pts} pts · 3 for a win</span></div>
+    <div class="kpi"><span class="l">Goals</span><span class="v num">${t.gf}:${t.ga}</span><span class="s">${t.gd >= 0 ? "+" : ""}${t.gd} difference · ${t.cs} clean sheet${t.cs === 1 ? "" : "s"}</span></div>
+    <div class="kpi"><span class="l">Pass accuracy</span><span class="v num">${fp(t.passPct)}</span><span class="s">Opponents ${fp(t.opassPct)}</span></div>
+    <div class="kpi"><span class="l">Skill rating</span><span class="v num">${snap ? snap.skillRating : "–"}</span><span class="s">${snap ? "Division " + snap.currentDivision + " · best " + snap.bestDivision : "Waiting for snapshot"}</span></div>
+  </div>
+  <div class="block"><div class="block-head"><h2>Form</h2><div class="form">${ms.slice(-15).map(m => `<span class="chip sm ${m.res}" title="${esc(dateFmt(m.ts))} vs ${esc(m.opp)} ${m.gf}-${m.ga}">${m.res}</span>`).join("")}</div></div>
+    <div class="grid g2">
+      <div class="block"><div class="block-head"><h3>Goal difference by match</h3><span class="note">Oldest left</span></div><div class="chart" id="cGD"></div></div>
+      <div class="block"><div class="block-head"><h3>Points per game, rolling 5</h3><span class="note">Dashed line = 1.5 (mid-table pace)</span></div><div class="chart" id="cPPG"></div></div>
+    </div>
+  </div>
+  <div class="block"><div class="block-head"><h2>How we play</h2><span class="note">Rolling 5-match averages, us against opponents</span></div>
+    <div class="grid g22">
+      <div class="block"><h3>Shots per game</h3><div class="chart" id="cSh"></div></div>
+      <div class="block"><h3>Pass accuracy</h3><div class="chart" id="cPass"></div></div>
+      <div class="block"><h3>Share of passes attempted</h3><div class="chart" id="cShare"></div></div>
+      <div class="block"><h3>Tackle success</h3><div class="chart" id="cTkl"></div></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="block"><h2>What the numbers say</h2><ul class="insights" style="margin-top:10px">${teamInsights(ms, t).map(i => `<li><span class="dot ${i.k}"></span><span>${esc(i.t)}</span></li>`).join("")}</ul></div>
+    <div class="block"><h2>Results by situation</h2><p class="note">Points per game. Small samples move a lot, so check the game count.</p>
+      <h3 style="margin:14px 0 8px">Humans in your team</h3>${splitView(groupPpg(ms, m => m.humans + " players"))}
+      <h3 style="margin:16px 0 8px">Game number in the session</h3>${splitView(groupPpg(ms, m => m._game >= 4 ? "Game 4+" : "Game " + m._game))}
+      <h3 style="margin:16px 0 8px">Opponent strength</h3>${splitView(groupPpg(ms, oppBand(ms)))}
+      <h3 style="margin:16px 0 8px">Day of week</h3>${splitView(groupPpg(ms, m => new Date(m.ts * 1000).toLocaleDateString([], { weekday: "long" })))}
+    </div>
+  </div>`;
+  const tipT = i => `${dateFmt(ms[i].ts)} · vs ${ms[i].opp}`;
+  barChart($("#cGD"), { title: "Goal difference", labels, values: ms.map(m => m._gd), tip: i => { const m = ms[i]; return `<b>${esc(dateFmt(m.ts))}</b><div>vs ${esc(m.opp)}</div><div class="row"><span>Score</span><span>${m.gf}-${m.ga} (${m.res})</span></div><div class="row"><span>Humans</span><span>${m.humans} v ${m.oppHumans}</span></div>`; } });
+  lineChart($("#cPPG"), { title: "Rolling points per game", labels, min: 0, max: 3, ref: 1.5, fmt: f2, tipTitle: tipT, series: [{ name: "Pts/game", color: "var(--us)", values: rolling(ms.map(m => m._pts)) }] });
+  lineChart($("#cSh"), { title: "Shots", labels, min: 0, tipTitle: tipT, series: [{ name: "Us", color: "var(--us)", values: rolling(ms.map(m => m.us.shots)) }, { name: "Opponents", color: "var(--them)", values: rolling(ms.map(m => m.them.shots)) }] });
+  lineChart($("#cPass"), { title: "Pass accuracy", labels, fmt: fp, tipTitle: tipT, series: [{ name: "Us", color: "var(--us)", values: rollRatio(ms, m => m.us.pm, m => m.us.pa) }, { name: "Opponents", color: "var(--them)", values: rollRatio(ms, m => m.them.pm, m => m.them.pa) }] });
+  lineChart($("#cShare"), { title: "Pass share", labels, min: 0, max: 100, ref: 50, fmt: fp, tipTitle: tipT, series: [{ name: "Our share", color: "var(--us)", values: rollRatio(ms, m => m.us.pa, m => m.us.pa + m.them.pa) }] });
+  lineChart($("#cTkl"), { title: "Tackle success", labels, min: 0, fmt: fp, tipTitle: tipT, series: [{ name: "Us", color: "var(--us)", values: rollRatio(ms, m => m.us.tm, m => m.us.ta) }, { name: "Opponents", color: "var(--them)", values: rollRatio(ms, m => m.them.tm, m => m.them.ta) }] });
+}
+function rollRatio(ms, nf, df, w = 5) { return ms.map((_, i) => { const s = ms.slice(Math.max(0, i - w + 1), i + 1); const d = sum(s, df); return d ? 100 * sum(s, nf) / d : null; }); }
+function oppBand(ms) {
+  const rs = ms.map(m => m.them.rating).filter(v => v != null).sort((a, b) => a - b); const med = rs[Math.floor(rs.length / 2)];
+  return m => m.them.rating == null ? "Unknown" : m.them.rating >= med ? "Stronger half" : "Weaker half";
+}
+function splitView(g) {
+  const rows = Object.entries(g).map(([label, v]) => ({ label, v: v.ppg, n: v.n })).sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+  return splitBars(rows, 3, f2);
+}
+
+const COLS = [
+  ["name", "Player", 0], ["n", "Games", 1], ["impact", "Impact", 1], ["rating", "Avg rating", 1], ["g", "Goals", 1], ["a", "Assists", 1], ["gi", "G+A / gm", 1],
+  ["shpg", "Shots / gm", 1], ["conv", "Shot conv.", 1], ["ppgm", "Passes / gm", 1], ["passPct", "Pass %", 1], ["tapg", "Tackles / gm", 1], ["tklPct", "Tackle %", 1],
+  ["mom", "MOTM", 1], ["winPct", "Win %", 1], ["gdOn", "GD / gm", 1]];
+const fmtCol = { impact: f0, rating: f1, gi: f2, shpg: f1, conv: fp, ppgm: f1, passPct: fp, tapg: f1, tklPct: fp, winPct: fp, gdOn: v => v == null ? "–" : (v > 0 ? "+" : "") + f1(v) };
+
+const FORM_SQUAD = [["rating", "Rating", f1, 1], ["gi", "G+A / gm", f2, 1], ["pmpg", "Passes made / gm", f1, 1], ["passPct", "Pass %", fp, 1], ["tklPct", "Tackle %", fp, 1], ["idlepg", "Idle s / gm", f0, -1]];
+
+/* ---------- one player in depth ---------- */
+const POS_COLOR = { forward: "var(--c2)", midfielder: "var(--c1)", defender: "var(--c3)", goalkeeper: "var(--c4)" };
+const POS_SHORT = { forward: "FWD", midfielder: "MID", defender: "DEF", goalkeeper: "GK" };
+const posName = p => p ? p[0].toUpperCase() + p.slice(1) : "Unknown";
+function pickerHtml(names) {
+  return `<div class="picker" role="group" aria-label="Choose a player"><button type="button" data-pl="" aria-pressed="${!S.focus}">Whole squad</button>${names.map(n => `<button type="button" data-pl="${esc(n)}" aria-pressed="${S.focus === n}"><span class="sw" style="background:${S.colorOf(n)}"></span>${esc(n)}</button>`).join("")}</div>`;
+}
+function setFocus(name) {
+  S.focus = name || null; try { localStorage.setItem("ah.focus", S.focus || ""); } catch (e) {}
+  render();
+  const top = $("#p-players").getBoundingClientRect().top + scrollY - 70; if (scrollY > top) scrollTo({ top });
+}
+function wireFocus(el) { el.querySelectorAll("[data-pl]").forEach(b => b.addEventListener("click", e => { e.preventDefault(); setFocus(b.dataset.pl); })); }
+
+function partBars(host, cfg) {
+  mount(host, () => {
+    const W = Math.max(260, host.clientWidth), H = cfg.h || 130, m = { l: 28, r: 6, t: 8, b: 22 }, n = cfg.total.length;
+    if (!n) { host.innerHTML = `<div class="note">No games in this range.</div>`; return; }
+    const sc = niceScale(0, Math.max(1, ...cfg.total), 3);
+    const bw = (W - m.l - m.r) / n, gap = Math.min(4, bw * 0.3), y = v => m.t + (H - m.t - m.b) * (1 - v / sc.hi);
+    const bar = (x, yt, w, yb, st) => { const h = yb - yt; if (h <= 0) return ""; const r = Math.min(3, w / 2, h); return `<path d="M${x} ${yb}V${yt + r}Q${x} ${yt} ${x + r} ${yt}H${x + w - r}Q${x + w} ${yt} ${x + w} ${yt + r}V${yb}Z" style="${st}"/>`; };
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(cfg.title || "")}">`;
+    sc.ticks.forEach(t => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" style="stroke:${t === 0 ? "var(--axis)" : "var(--line)"};stroke-width:1"/><text x="${m.l - 5}" y="${y(t) + 4}" text-anchor="end">${t}</text>`; });
+    cfg.total.forEach((t, i) => { const x0 = m.l + i * bw + gap / 2, w = Math.max(2, bw - gap);
+      s += bar(x0, y(t), w, y(0), `fill:${cfg.color};fill-opacity:.28`) + bar(x0, y(cfg.part[i]), w, y(0), `fill:${cfg.color}`); });
+    const every = Math.max(1, Math.ceil(n / 6));
+    cfg.labels.forEach((l, i) => { if (i % every === 0 || i === n - 1) s += `<text x="${m.l + i * bw + bw / 2}" y="${H - 6}" text-anchor="middle">${esc(l)}</text>`; });
+    s += `<rect x="${m.l}" y="0" width="${W - m.l - m.r}" height="${H}" style="fill:transparent"/></svg><div class="tip" hidden></div>`;
+    host.innerHTML = `<div class="legend" style="padding:0 0 6px"><span><i style="background:${cfg.color};opacity:.35;height:10px"></i>${esc(cfg.totalName)}</span><span><i style="background:${cfg.color};height:10px"></i>${esc(cfg.partName)}</span></div>` + s;
+    host.style.position = "relative";
+    const svg = $("svg", host), tip = $(".tip", host);
+    const move = ev => { const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, i = Math.floor(clamp((px - m.l) / bw, 0, n - 0.001));
+      tip.innerHTML = cfg.tip(i); tip.hidden = false; const hx = (m.l + i * bw + bw / 2) * r.width / W;
+      tip.style.left = Math.max(4, hx + 180 > host.clientWidth ? hx - 186 : hx + 10) + "px"; tip.style.top = "24px"; };
+    svg.addEventListener("pointermove", move); svg.addEventListener("pointerdown", move);
+    svg.addEventListener("pointerleave", () => tip.hidden = true);
+  });
+}
+
+function renderFocus(el, ms, ps, names) {
+  const p = ps.find(x => x.name === S.focus);
+  if (!p) { el.innerHTML = pickerHtml(names) + `<div class="empty"><h3>No games for ${esc(S.focus)} with these filters</h3><p>Pick another player, or choose All and All time above.</p></div>`; wireFocus(el); return; }
+  const s = p.st, color = S.colorOf(p.name);
+  const sq = aggPlayer(ms.flatMap(m => m._players), ms);           // average squad appearance in the same games range
+  const G = p.mine.map(a => ({ a, m: S.byId[a.m] }));
+  const tot = f => sum(G, f);
+  const even = 100 * avg(G, g => 1 / Math.max(1, g.m.humans));
+  const shotShare = pct(s.sh, tot(g => g.m.us.shots)), passShare = pct(s.pa, tot(g => g.m.us.pa)), tklShare = pct(s.ta, tot(g => g.m.us.ta));
+  const gaOn = avg(G, g => g.m.ga), sqGa = avg(ms, m => m.ga), cs = G.filter(g => g.m.ga === 0).length;
+  const c = coaching(p), fs = formSplit(p.name);
+  const row = (label, v, b, fmt, better = 1) => {
+    let d = ""; if (v != null && b != null && !isNaN(v) && !isNaN(b)) { const diff = v - b; d = Math.abs(diff) < 0.005 ? `<span class="muted">level</span>` : `<span class="${diff * better > 0 ? "up" : "down"}">${diff > 0 ? "▲" : "▼"}</span>`; }
+    return `<tr><td>${label}</td><td class="n num"><b>${fmt(v)}</b></td><td class="n num muted">${b === undefined ? "" : fmt(b)}</td><td style="width:22px">${d}</td></tr>`; };
+  const cmp = rows => `<table class="cmp"><thead><tr><th></th><th class="n">${esc(p.name.length > 12 ? "Player" : p.name)}</th><th class="n">Squad</th><th></th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  const perPos = {}; G.forEach(g => (perPos[g.a.pos] ||= []).push(g.a));
+  const subTable = (title, groups, labelFn) => `<div class="tablewrap"><table><thead><tr><th>${title}</th><th class="n">Games</th><th class="n">Avg rating</th><th class="n">G+A / gm</th><th class="n">Shots / gm</th><th class="n">Pass %</th><th class="n">Tackle %</th><th class="n">Pts / gm</th></tr></thead><tbody>
+    ${groups.map(([k, apps]) => { const st = aggPlayer(apps, ms); return `<tr><td>${labelFn(k)}</td><td class="n">${st.n}</td><td class="n">${f1(st.rating)}</td><td class="n">${f2(st.gi)}</td><td class="n">${f1(st.shpg)}</td><td class="n">${fp(st.passPct)}</td><td class="n">${fp(st.tklPct)}</td><td class="n">${f2(st.ppg)}</td></tr>`; }).join("")}</tbody></table></div>`;
+  const posGroups = Object.entries(perPos).sort((a, b) => b[1].length - a[1].length);
+  const roleGroups = Object.entries(p.roleCounts).sort((a, b) => b[1] - a[1]).map(([r]) => [r, p.mine.filter(a => String(a.arch) === r)]);
+  const labels = G.map(g => dayFmt(g.m.ts));
+  const tipT = i => `${dateFmt(G[i].m.ts)} · vs ${G[i].m.opp} ${G[i].m.gf}-${G[i].m.ga}`;
+  const rollR = (nf, df) => G.map((_, i) => { const w = G.slice(Math.max(0, i - 4), i + 1), d = sum(w, df); return d ? 100 * sum(w, nf) / d : null; });
+
+  el.innerHTML = pickerHtml(names) + `
+  <div class="focus-head">
+    <div><div class="eyebrow">Player breakdown</div><h2><span class="sw" style="background:${color};width:14px;height:14px;display:inline-block;margin-right:8px;border-radius:3px"></span>${esc(p.name)}</h2>
+      <div class="note">${s.n} game${s.n === 1 ? "" : "s"} · ${f0(s.min)} min played · ${f0(s.idle)} s idle · ${s.W}-${s.D}-${s.L} · mostly ${esc(posName(Object.entries(p.posCounts).sort((a, b) => b[1] - a[1])[0][0]))} as ${esc(roleName(p.mainRole))}</div></div>
+    <div class="focus-kpis">
+      <div><span class="v num">${f0(s.impact)}</span><span class="l">Impact</span></div>
+      <div><span class="v num">${f1(s.rating)}</span><span class="l">Avg rating</span></div>
+      <div><span class="v num">${s.g} / ${s.a}</span><span class="l">Goals / assists</span></div>
+      <div><span class="v num">${s.mom}</span><span class="l">Man of the match</span></div>
+    </div>
+  </div>
+  <div class="block"><div class="block-head"><h2>Coaching feedback</h2><span class="note">Based on the games in the current filter, compared with ${esc(p.baseLabel)} and with this player's own previous 10 games.</span></div>
+    ${fbHtml(c)}</div>
+
+  <div class="block"><div class="block-head"><h2>Last 10 vs previous 10</h2><span class="note">This player's last ${fs.nl} games against the ${fs.np} before them${S.f.type !== "all" ? ` (${S.f.type} only)` : ""}. Ignores the date range filter.</span></div>
+    ${fs.np ? `<div class="tablewrap"><table class="fc"><thead><tr><th></th><th class="n">Previous ${fs.np}</th><th class="n">Last ${fs.nl}</th><th class="n">Change</th></tr></thead><tbody>
+    ${formRows().map(([k, lab, fmt, better]) => { const l = fs.last[k], pv = fs.prev[k]; const d = l != null && pv != null && !isNaN(l) && !isNaN(pv) ? l - pv : null;
+      return `<tr><td>${lab}</td><td class="n prev">${fmt(pv)}</td><td class="n"><b>${fmt(l)}</b></td><td class="n">${d == null ? "–" : (d > 0 ? "+" : d < 0 ? "−" : "") + fmt(Math.abs(d))}${arrow(l, pv, fmt, better)}</td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="empty"><p>${esc(p.name)} has ${fs.nl} saved game${fs.nl === 1 ? "" : "s"}. The comparison appears from game 11, once there is a previous block to compare with.</p></div>`}
+  </div>
+
+  <div class="block"><div class="block-head"><h2>Performance trends</h2><span class="note">Faint line: each game. Bold line: average of the last 5 games.</span></div>
+    <div class="grid g22">
+      <div class="area"><h3>Match rating</h3><div class="chart" id="fRate"></div></div>
+      <div class="area"><h3>Goals + assists</h3><div class="chart" id="fGI"></div></div>
+      <div class="area"><h3>Pass accuracy</h3><div class="chart" id="fPass"></div></div>
+      <div class="area"><h3>Tackle success</h3><div class="chart" id="fTkl"></div></div>
+    </div></div>
+
+  <div class="block"><div class="block-head"><h2>Breakdown</h2><span class="note">Squad = the average player appearance in the same games range.</span></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))">
+      <div class="area"><h3>Shooting</h3>
+        <div class="note">${s.g} goal${s.g === 1 ? "" : "s"} from ${s.sh} shot${s.sh === 1 ? "" : "s"}</div>
+        ${cmp([row("Shots per game", s.shpg, sq.shpg, f1), row("Goals per game", s.gpg, sq.gpg, f2), row("Shot conversion", s.conv, sq.conv, fp), row("Share of team shots", shotShare, even, fp)])}
+        <div class="chart" id="fShots"></div></div>
+      <div class="area"><h3>Passing</h3>
+        <div class="note">${s.pm} passes made, ${s.pa - s.pm} missed · ${recvCode() ? (s.recvN ? `${s.recv} received (${s.recvN} game${s.recvN === 1 ? "" : "s"} with data)` : "no received-pass data yet") : "passes received not decoded yet"} · ${s.a} assist${s.a === 1 ? "" : "s"}</div>
+        ${cmp([row("Passes per game", s.ppgm, sq.ppgm, f1), row("Passes made per game", s.pmpg, sq.pmpg, f1), row("Passes missed per game", s.misspg, sq.misspg, f1, -1), ...(recvCode() ? [row("Passes received per game", s.recvpg, sq.recvpg, f1)] : []), row("Pass accuracy", s.passPct, sq.passPct, fp), row("Assists per game", s.apg, sq.apg, f2), row("Share of team passes", passShare, even, fp)])}
+        <div class="chart" id="fPasses"></div></div>
+      <div class="area"><h3>Defending</h3>
+        <div class="note">${s.tm} of ${s.ta} tackles won · ${s.red} red card${s.red === 1 ? "" : "s"}</div>
+        ${cmp([row("Tackles per game", s.tapg, sq.tapg, f1), row("Tackles won per game", s.tmpg, sq.tmpg, f1), row("Tackle success", s.tklPct, sq.tklPct, fp), row("Share of team tackles", tklShare, even, fp), row("Team conceded per game", gaOn, sqGa, f2, -1), row("Clean sheets", cs, undefined, f0)])}
+        <div class="chart" id="fTackles"></div></div>
+    </div>
+    <p class="note" style="margin-top:8px">"Share of team" compares with an even split between the humans who played, so above it means doing more than their part. Team conceded counts every goal let in while this player was on the pitch.</p></div>
+
+  ${evSection(p, ms)}
+
+  <div class="block"><div class="block-head"><h2>Position and role by game</h2><span class="note">Oldest left. Hover or tap a square for the game.</span></div>
+    <div class="posstrip">${G.map(g => `<span style="border-bottom-color:${POS_COLOR[g.a.pos] || "var(--them)"}" title="${esc(dateFmt(g.m.ts))} vs ${esc(g.m.opp)} · ${esc(posName(g.a.pos))} · ${esc(roleName(g.a.arch))} · rating ${f1(g.a.r)}">${POS_SHORT[g.a.pos] || "?"}</span>`).join("")}</div>
+    <div class="legend" style="padding:8px 0 0">${Object.keys(POS_SHORT).filter(k => perPos[k]).map(k => `<span><i style="background:${POS_COLOR[k]}"></i>${POS_SHORT[k]} = ${posName(k)}</span>`).join("")}</div>
+    <div class="grid" style="margin-top:12px">${subTable("Position", posGroups, k => esc(posName(k)))}${subTable("Role", roleGroups, k => esc(roleName(k)))}</div>
+  </div>
+
+  <div class="block"><div class="block-head"><h2>Game log</h2><span class="note">Newest first</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Kick-off</th><th>Opponent</th><th>Result</th><th>Position</th><th>Role</th><th class="n">Rating</th><th class="n">G</th><th class="n">A</th><th class="n">Shots</th><th class="n">Passes made</th><th class="n">Missed</th>${recvCode() ? `<th class="n">Received</th>` : ""}<th class="n">Tackles</th><th class="n">Min</th><th class="n">Idle s</th><th>MOTM</th></tr></thead><tbody>
+    ${G.slice().reverse().map(g => { const rv = recvOf(g.a); return `<tr><td>${esc(dateFmt(g.m.ts))}${S.newIds.has(g.m.id) ? `<span class="pill">New</span>` : ""}</td><td>${esc(g.m.opp)}</td><td><span class="chip sm ${g.m.res}">${g.m.res}</span> <span class="num">${g.m.gf}-${g.m.ga}</span></td><td>${esc(posName(g.a.pos))}</td><td>${esc(roleName(g.a.arch))}</td><td class="n">${f1(g.a.r)}</td><td class="n">${g.a.g}</td><td class="n">${g.a.a}</td><td class="n">${g.a.sh}</td><td class="n">${g.a.pm}</td><td class="n">${g.a.pa - g.a.pm}</td>${recvCode() ? `<td class="n">${rv == null ? "–" : rv}</td>` : ""}<td class="n">${g.a.tm}/${g.a.ta}</td><td class="n">${f0(Math.min(g.a.sec || 0, 1500) / 60)}</td><td class="n">${g.a.idle ?? "–"}</td><td>${g.a.mom ? "★" : ""}</td></tr>`; }).join("")}
+    </tbody></table></div></div>`;
+  wireFocus(el);
+  const faint = "var(--axis)";
+  lineChart($("#fRate"), { h: 170, title: "Match rating", labels, min: 4, max: 10, tipTitle: tipT, series: [{ name: "Each game", color: faint, values: G.map(g => g.a.r) }, { name: "Last 5 average", color, values: rolling(G.map(g => g.a.r)) }] });
+  lineChart($("#fGI"), { h: 170, title: "Goals plus assists", labels, min: 0, fmt: f1, tipTitle: tipT, series: [{ name: "Each game", color: faint, values: G.map(g => g.a.g + g.a.a) }, { name: "Last 5 average", color, values: rolling(G.map(g => g.a.g + g.a.a)) }] });
+  lineChart($("#fPass"), { h: 170, title: "Pass accuracy", labels, min: 0, max: 100, fmt: fp, tipTitle: tipT, series: [{ name: "Each game", color: faint, values: G.map(g => g.a.pa ? 100 * g.a.pm / g.a.pa : null) }, { name: "Last 5 average", color, values: rollR(g => g.a.pm, g => g.a.pa) }] });
+  lineChart($("#fTkl"), { h: 170, title: "Tackle success", labels, min: 0, max: 100, fmt: fp, tipTitle: tipT, series: [{ name: "Each game", color: faint, values: G.map(g => g.a.ta ? 100 * g.a.tm / g.a.ta : null) }, { name: "Last 5 average", color, values: rollR(g => g.a.tm, g => g.a.ta) }] });
+  const tipG = (i, rows) => `<b>${esc(tipT(i))}</b>` + rows.map(([k, v]) => `<div class="row"><span>${k}</span><span>${v}</span></div>`).join("");
+  partBars($("#fShots"), { title: "Shots and goals per game", labels, color, total: G.map(g => g.a.sh), part: G.map(g => g.a.g), totalName: "Shots", partName: "Goals", tip: i => tipG(i, [["Shots", G[i].a.sh], ["Goals", G[i].a.g]]) });
+  partBars($("#fPasses"), { title: "Passes per game", labels, color, total: G.map(g => g.a.pa), part: G.map(g => g.a.pm), totalName: "Attempted", partName: "Completed", tip: i => tipG(i, [["Attempted", G[i].a.pa], ["Completed", G[i].a.pm], ["Assists", G[i].a.a]]) });
+  partBars($("#fTackles"), { title: "Tackles per game", labels, color, total: G.map(g => g.a.ta), part: G.map(g => g.a.tm), totalName: "Attempted", partName: "Won", tip: i => tipG(i, [["Attempted", G[i].a.ta], ["Won", G[i].a.tm], ["Team conceded", G[i].m.ga]]) });
+}
+
+function renderPlayers(ms) {
+  const el = $("#p-players"); charts.length = 0;
+  if (!ms.length) { el.innerHTML = emptyState(); return; }
+  const ps = players(ms);
+  const names = ps.slice().sort((a, b) => b.st.n - a.st.n || a.name.localeCompare(b.name)).map(p => p.name);
+  if (S.focus) return renderFocus(el, ms, ps, names);
+  const k = S.sort.key;
+  ps.sort((a, b) => { const va = k === "name" ? a.name.toLowerCase() : a.st[k] ?? -1e9, vb = k === "name" ? b.name.toLowerCase() : b.st[k] ?? -1e9; return (va > vb ? 1 : va < vb ? -1 : 0) * S.sort.dir; });
+  el.innerHTML = pickerHtml(names) + `
+  <div class="block"><div class="block-head"><h2>Squad table</h2><span class="note">Click a column to sort, or a name for that player's full breakdown.</span></div>
+    <div class="tablewrap"><table><thead><tr>${COLS.map(([key, lab, n]) => `<th class="sortable ${n ? "n" : ""}" data-k="${key}" ${S.sort.key === key ? `aria-sort="${S.sort.dir > 0 ? "ascending" : "descending"}"` : ""}>${lab}${S.sort.key === key ? (S.sort.dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}<th>Main role</th></tr></thead>
+    <tbody>${ps.map(p => `<tr>${COLS.map(([key, , n]) => key === "name" ? `<td><button type="button" class="linkbtn pname" data-pl="${esc(p.name)}" style="text-decoration:none"><span class="sw" style="background:${S.colorOf(p.name)}"></span>${esc(p.name)}</button></td>` : `<td class="${n ? "n" : ""}">${(fmtCol[key] || f0)(p.st[key])}</td>`).join("")}<td>${esc(roleName(p.mainRole))}</td></tr>`).join("")}</tbody></table></div>
+  </div>
+  <div class="block"><div class="block-head"><h2>Form: last 10 vs previous 10</h2><span class="note">Each player's own last 10 games against the 10 before. Grey = previous 10, bold = last 10. Ignores the date range filter.</span></div>
+    <div class="tablewrap"><table class="fc"><thead><tr><th>Player</th><th class="n">Games</th>${FORM_SQUAD.map(([, lab]) => `<th class="n">${lab}</th>`).join("")}</tr></thead><tbody>
+    ${names.map(n => { const fs = formSplit(n); return `<tr><td><button type="button" class="linkbtn pname" data-pl="${esc(n)}" style="text-decoration:none"><span class="sw" style="background:${S.colorOf(n)}"></span>${esc(n)}</button></td><td class="n">${fs.np ? `${fs.np} → ${fs.nl}` : `${fs.nl} <span class="muted">(need 11+)</span>`}</td>${FORM_SQUAD.map(([k, , fmt, better]) => { const l = fs.last[k], pv = fs.prev[k];
+      return fs.np ? `<td class="n"><span class="muted">${fmt(pv)}</span> → <b>${fmt(l)}</b>${arrow(l, pv, fmt, better)}</td>` : `<td class="n"><b>${fmt(l)}</b></td>`; }).join("")}</tr>`; }).join("")}
+    </tbody></table></div></div>
+  ${evSquadTable(names, ms)}
+  <div class="block"><div class="block-head"><h3>Match rating by appearance</h3><span class="note">EA's 0–10 match rating. Each line is one player's own games in order.</span></div><div class="chart" id="cRate"></div></div>
+  <div class="block"><div class="block-head"><h2>Player reports</h2><span class="note">Compared with teammates in the same role when there are 3+ such games, otherwise with the squad average.</span></div>
+    <div class="cards">${ps.slice().sort((a, b) => b.st.impact - a.st.impact).map(cardHtml).join("")}</div></div>`;
+  el.querySelectorAll("th.sortable").forEach(th => th.addEventListener("click", () => { const key = th.dataset.k; S.sort = { key, dir: S.sort.key === key ? -S.sort.dir : (key === "name" ? 1 : -1) }; render(); }));
+  wireFocus(el);
+  const maxN = Math.max(...ps.map(p => p.mine.length));
+  lineChart($("#cRate"), { title: "Match ratings", labels: Array.from({ length: maxN }, (_, i) => "G" + (i + 1)), min: 4, max: 10,
+    tipTitle: i => "Each player's game " + (i + 1),
+    series: ps.map(p => ({ name: p.name, color: S.colorOf(p.name), values: Array.from({ length: maxN }, (_, i) => p.mine[i]?.r ?? null) })) });
+  ps.forEach((p, idx) => {
+    const host = $("#spark-" + idx); if (!host) return;
+    lineChart(host, { h: 90, min: 4, max: 10, labels: p.mine.map(a => dayFmt(S.byId[a.m].ts)), tipTitle: i => `${dateFmt(S.byId[p.mine[i].m].ts)} vs ${S.byId[p.mine[i].m].opp}`,
+      tipExtra: i => { const a = p.mine[i]; return `<div class="row"><span>G / A</span><span>${a.g} / ${a.a}</span></div><div class="row"><span>Role</span><span>${esc(roleName(a.arch))}</span></div>`; },
+      series: [{ name: "Rating", color: S.colorOf(p.name), values: p.mine.map(a => a.r) }] });
+  });
+  function cardHtml(p, i) {
+    const s = p.st, b = p.base, c = coaching(p), idx = ps.indexOf(p);
+    const delta = (v, bv, fmt, good = 1) => { if (v == null || bv == null) return ""; const d = v - bv; if (Math.abs(d) < 0.05) return `<span class="d muted">level</span>`; const up = d * good > 0; return `<span class="d ${up ? "up" : "down"}">${d > 0 ? "▲" : "▼"} ${fmt(Math.abs(d))}</span>`; };
+    const stat = (l, v, fmt, bv, dfmt) => `<div class="stat"><div class="v num">${fmt(v)}</div><div class="l">${l}</div>${delta(v, bv, dfmt || fmt)}</div>`;
+    const roles = Object.entries(p.roleCounts).sort((a, b) => b[1] - a[1]).map(([r, n]) => `<span class="tag">${esc(roleName(r))} ×${n}</span>`).join("");
+    const pos = Object.entries(p.posCounts).map(([r, n]) => `<span class="tag">${esc(r)} ×${n}</span>`).join("");
+    return `<article class="card">
+      <div class="card-head"><div><span class="pname" style="font-weight:400"><span class="sw" style="background:${S.colorOf(p.name)}"></span><span class="muted" style="font-size:.82rem">${s.n} game${s.n === 1 ? "" : "s"} · ${f0(s.min)} min · ${s.W}-${s.D}-${s.L}</span></span><h3>${esc(p.name)}</h3></div>
+        <div class="score"><div class="v num">${f0(s.impact)}</div><div class="l">Impact</div></div></div>
+      <div class="tags">${roles}${pos}</div>
+      <div class="statgrid">
+        ${stat("Avg rating", s.rating, f1, b.rating)}${stat("G+A / game", s.gi, f2, b.gi)}${stat("Shot conv.", s.conv, fp, b.conv, v => f0(v) + " pts")}
+        ${stat("Pass %", s.passPct, fp, b.passPct, v => f0(v) + " pts")}${stat("Passes made / gm", s.pmpg, f1, b.pmpg)}${stat("Tackle %", s.tklPct, fp, b.tklPct, v => f0(v) + " pts")}
+      </div>
+      <div class="note" style="margin-top:-4px">Arrows compare with ${esc(p.baseLabel)}.</div>
+      <div class="chart spark" id="spark-${idx}" style="height:auto"></div>
+      ${fbHtml(c)}
+      ${p.byRole.length > 1 ? `<div class="mini"><h4>By role</h4><ul>${p.byRole.map(r => `<li>${esc(roleName(r.arch))}: ${r.n} gm, rating ${f1(r.st.rating)}, ${f2(r.st.gi)} G+A/gm, ${fp(r.st.passPct)} passing</li>`).join("")}</ul></div>` : ""}
+      <button type="button" class="linkbtn" data-pl="${esc(p.name)}" style="justify-self:start">Full breakdown: shooting, passing, defending, positions</button>
+      <details><summary class="note" style="cursor:pointer">How the score is built</summary><div class="breakdown" style="margin-top:8px">${Object.entries(s.parts).map(([k, v]) => { const mx = { "EA rating": 35, "Goals + assists": 20, "Passing": 15, "Defending": 10, "Results": 15, "Man of the match": 5 }[k]; return `<div class="bk"><span>${k}</span><div class="track"><div class="fill" style="width:${100 * v / mx}%"></div></div><span class="num">${f0(v)}/${mx}</span></div>`; }).join("")}</div></details>
+    </article>`;
+  }
+}
+
+/* ---------- EA event counters (decoded by the community research repo) ---------- */
+function evDefs() { return (S.bench.events && S.bench.events.derived) || []; }
+function evAgg(apps) {
+  const A = apps.filter(p => p.ev), n = A.length, o = { n };
+  evDefs().forEach(([, k, , codes]) => { o[k] = n ? sum(A, p => sum(codes, c => +p.ev[c] || 0)) / n : null; });
+  if (n) {
+    const tin = sum(A, p => +p.ev[111] || 0), tout = sum(A, p => +p.ev[219] || 0);
+    const gd = sum(A, p => (+p.ev[176] || 0) + (+p.ev[177] || 0)), bad = sum(A, p => +p.ev[182] || 0);
+    o.posPct = tin + tout ? 100 * tin / (tin + tout) : null; o.decPct = gd + bad ? 100 * gd / (gd + bad) : null;
+    o.fwdShare = o.pmade ? 100 * o.fwd / o.pmade : null;
+  }
+  return o;
+}
+function mainPos(apps) { const c = {}; apps.forEach(p => c[p.pos] = (c[p.pos] || 0) + 1); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || "midfielder"; }
+function popPct(pos, key, v) {
+  const q = S.bench.events?.positions?.[pos]?.q?.[key]; if (!q || v == null || isNaN(v)) return null;
+  const P = [10, 25, 50, 75, 90];
+  if (v < q[0]) return 5; if (v > q[4]) return 95;
+  const eq = P.filter((_, i) => q[i] === v); if (eq.length) return (eq[0] + eq.at(-1)) / 2;
+  for (let i = 0; i < 4; i++) if (v >= q[i] && v <= q[i + 1]) return P[i] + (P[i + 1] - P[i]) * (v - q[i]) / (q[i + 1] - q[i]);
+  return null;
+}
+const popMed = (pos, key) => S.bench.events?.positions?.[pos]?.q?.[key]?.[2] ?? null;
+const EV_RATES = [["Positioning", "posPct", "In position (share of positioning prompts)", 1], ["Decisions", "decPct", "Good or best option (share of pass feedback)", 1], ["Passing", "fwdShare", "Share of completed passes played forward", 1]];
+function evRows() { return evDefs().map(([g, k, lab, , b]) => [g, k, lab, b]).concat(EV_RATES); }
+function evFmt(k, v) { return /Pct|Share/.test(k) ? fp(v) : f1(v); }
+function evCoach(name, apps) {
+  const e = evAgg(apps), pos = mainPos(apps), out = { well: [], more: [], fix: [], cut: [] };
+  if (e.n < 3 || !S.bench.events) return out;
+  const pn = posName(pos).toLowerCase();
+  const scored = evRows().filter(([, , , b]) => b !== 0).map(([g, k, lab, b]) => ({ g, k, lab, b, v: e[k], p: popPct(pos, k, e[k]), m: popMed(pos, k) })).filter(x => x.p != null);
+  const rate = x => /Pct|Share/.test(x.k);
+  scored.filter(x => x.b > 0 && x.p >= 80).sort((a, b) => b.p - a.p).slice(0, 2).forEach(x => out.well.push(`${x.lab}: ${evFmt(x.k, x.v)}${rate(x) ? "" : " a game"}, better than about ${Math.round(x.p)}% of ${pn}s in EA's wider pool.`));
+  scored.filter(x => x.b > 0 && x.p <= 20 && !rate(x) && x.m >= 0.5).sort((a, b) => a.p - b.p).slice(0, 2).forEach(x => out.more.push(`${x.lab}: ${evFmt(x.k, x.v)} a game vs ${evFmt(x.k, x.m)} for a typical ${pn}.`));
+  scored.filter(x => x.b > 0 && x.p <= 20 && rate(x)).forEach(x => out.fix.push(`${x.lab}: ${evFmt(x.k, x.v)} vs ${evFmt(x.k, x.m)} for a typical ${pn}.`));
+  scored.filter(x => x.b < 0 && x.p >= 80 && x.v >= 0.5 && x.v - x.m >= 0.3).sort((a, b) => b.p - a.p).slice(0, 2).forEach(x => out.cut.push(`${x.lab}: ${evFmt(x.k, x.v)} a game vs ${evFmt(x.k, x.m)} for a typical ${pn}.`));
+  return out;
+}
+function evSection(p, ms) {
+  const e = evAgg(p.mine), pos = mainPos(p.mine), pn = posName(pos);
+  const sq = evAgg(ms.flatMap(m => m._players));
+  if (!e.n) return `<div class="block"><div class="block-head"><h2>Match actions</h2></div><div class="empty"><p>No games with EA event data for ${esc(p.name)} in this range yet. Event data is saved for every game from 13 October 2026 onwards.</p></div></div>`;
+  const groups = [...new Set(evRows().map(r => r[0]))];
+  return `<div class="block"><div class="block-head"><h2>Match actions</h2><span class="note">Per-game averages from EA's event counters (${e.n} game${e.n === 1 ? "" : "s"} with data). "Typical ${esc(pn.toLowerCase())}" is the median ${esc(pn.toLowerCase())} in a community dataset of 51,395 player-matches; the coloured number is ${esc(p.name)}'s percentile against them.</span></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))">
+    ${groups.map(g => `<div class="area"><h3>${g}</h3><div style="overflow-x:auto"><table class="cmp"><thead><tr><th></th><th class="n">${esc(p.name.length > 12 ? "Player" : p.name)}</th><th class="n">Squad</th><th class="n">Typical</th><th class="n"></th></tr></thead><tbody>
+      ${evRows().filter(r => r[0] === g).map(([, k, lab, b]) => `<tr><td>${esc(lab)}</td><td class="n"><b>${evFmt(k, e[k])}</b></td><td class="n muted">${evFmt(k, sq[k])}</td><td class="n muted">${evFmt(k, popMed(pos, k))}</td><td class="n">${pbadge(popPct(pos, k, e[k]), b)}</td></tr>`).join("")}
+    </tbody></table></div></div>`).join("")}
+    </div><p class="note" style="margin-top:8px">Event meanings come from the community research at github.com/Interactive-63/eafc-pro-clubs-api-research. "Prompts" and "option taken" are the in-game feedback pop-ups. Squad = our players' average across the same games.</p></div>`;
+}
+const EV_SQUAD = [["int", "Interceptions", 1], ["won", "Possession won", 1], ["lost", "Possession lost", -1], ["drib", "Dribbles", 1], ["thru", "Through balls", 1], ["fwdShare", "Forward pass %", 1], ["posPct", "In position %", 1], ["decPct", "Good decisions %", 1]];
+function evSquadTable(names, ms) {
+  const rows = names.map(n => { const apps = ms.flatMap(m => m._players.filter(p => p.p === n)); return { n, e: evAgg(apps), pos: mainPos(apps) }; }).filter(r => r.e.n);
+  if (!rows.length || !S.bench.events) return "";
+  return `<div class="block"><div class="block-head"><h2>Match actions per game</h2><span class="note">From EA's event counters (games from 13 Oct onwards). Coloured number = percentile against players in the same position across 51,395 player-matches from other clubs.</span></div>
+  <div class="tablewrap"><table class="pcmp"><thead><tr><th>Player</th><th>Position</th><th class="n">Games</th>${EV_SQUAD.map(([, l]) => `<th class="n">${l}</th>`).join("")}</tr></thead><tbody>
+  ${rows.map(r => `<tr><td><button type="button" class="linkbtn pname" data-pl="${esc(r.n)}" style="text-decoration:none"><span class="sw" style="background:${S.colorOf(r.n)}"></span>${esc(r.n)}</button></td><td>${esc(posName(r.pos))}</td><td class="n">${r.e.n}</td>${EV_SQUAD.map(([k, , b]) => `<td class="n"><b>${evFmt(k, r.e[k])}</b> ${pbadge(popPct(r.pos, k, r.e[k]), b)}</td>`).join("")}</tr>`).join("")}
+  </tbody></table></div></div>`;
+}
+
+/* ---------- compare with other clubs ---------- */
+const BENCH_GROUPS = [["top", "Top 20 clubs"], ["div", "Division 4"], ["near", "Near our rating"]];
+const median = a => { const s = a.filter(v => v != null && !isNaN(v)).sort((x, y) => x - y); if (!s.length) return null; const h = s.length >> 1; return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2; };
+const pctile = (v, arr) => { const s = arr.filter(x => x != null && !isNaN(x)); if (v == null || !s.length) return null; return 100 * (s.filter(x => x < v).length + 0.5 * s.filter(x => x === v).length) / s.length; };
+function clubRow(c) {
+  const ms = (c.members || []).filter(m => m.gp > 0), gp = c.gp || c.gamesPlayed;
+  const att = sum(ms, m => m.passPct ? m.pm * 100 / m.passPct : 0), tAtt = sum(ms, m => m.tklPct ? m.tm * 100 / m.tklPct : 0), apps = sum(ms, m => m.gp);
+  const w = c.w ?? c.wins, d = c.d ?? c.ties, l = c.l ?? c.losses, gf = c.gf ?? c.goals, ga = c.ga ?? c.goalsAgainst;
+  return { id: c.id, name: c.name, sr: c.sr ?? c.skillRating, div: c.div ?? c.currentDivision, gp, w, d, l, gf, ga,
+    winPct: pct(w, gp), ppg: gp ? (3 * w + d) / gp : null, gfpg: gp ? gf / gp : null, gapg: gp ? ga / gp : null, gdpg: gp ? (gf - ga) / gp : null,
+    passPct: att ? 100 * sum(ms, m => m.pm) / att : null, tklPct: tAtt ? 100 * sum(ms, m => m.tm) / tAtt : null,
+    rating: apps ? sum(ms, m => m.r * m.gp) / apps : null, squad: ms.filter(m => m.gp >= 5).length, members: ms };
+}
+function playerRow(m) {
+  const gp = m.gp || 0;
+  return { p: m.p, fav: m.fav || "", gp, rating: m.r, gpg: gp ? m.g / gp : null, apg: gp ? m.a / gp : null, gapg: gp ? (m.g + m.a) / gp : null, pmpg: gp ? m.pm / gp : null,
+    passPct: m.passPct, tmpg: gp ? m.tm / gp : null, tklPct: m.tklPct, shotPct: m.shotPct, momPct: gp ? 100 * m.mom / gp : null, wr: m.wr, ovr: m.ovr };
+}
+const CLUB_M = [["sr", "Skill rating", f0, 1], ["winPct", "Win rate", fp, 1], ["ppg", "Points / game", f2, 1], ["gfpg", "Goals for / game", f2, 1], ["gapg", "Goals against / game", f2, -1],
+  ["gdpg", "Goal difference / game", v => v == null ? "–" : (v > 0 ? "+" : "") + f2(v), 1], ["passPct", "Pass accuracy", fp, 1], ["tklPct", "Tackle success", fp, 1], ["rating", "Average match rating", f1, 1], ["squad", "Players with 5+ games", f0, 0]];
+const PLAYER_M = [["rating", "Rating", f1, 1], ["gapg", "G+A / gm", f2, 1], ["gpg", "Goals / gm", f2, 1], ["apg", "Assists / gm", f2, 1], ["pmpg", "Passes made / gm", f1, 1], ["passPct", "Pass %", fp, 1],
+  ["tmpg", "Tackles won / gm", f2, 1], ["tklPct", "Tackle %", fp, 1], ["shotPct", "Shot %", fp, 1], ["momPct", "MOTM %", fp, 1], ["wr", "Win %", fp, 1]];
+function pbadge(p, better) {
+  if (p == null || better === 0) return "";
+  const q = better > 0 ? p : 100 - p, col = q >= 75 ? "var(--good-ink)" : q <= 25 ? "var(--crit)" : "var(--muted)";
+  const r = Math.round(q), sfx = r % 100 >= 11 && r % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[r % 10] || "th");
+  return `<span class="pc" style="color:${col}">${r}<small>${sfx}</small></span>`;
+}
+function renderCompare() {
+  const el = $("#p-compare"); charts.length = 0;
+  const g = S.bench && S.bench[S.cmpGroup];
+  const snap = S.snaps[0];
+  const seg = `<div class="seg" role="group" aria-label="Comparison group" id="cmpSeg">${BENCH_GROUPS.map(([k, l]) => `<button data-g="${k}" aria-pressed="${S.cmpGroup === k}">${l}</button>`).join("")}</div>`;
+  if (!g || !snap) { el.innerHTML = `<div class="block-head"><h2>Compare with other clubs</h2>${seg}</div>` + emptyState(!snap ? "Comparisons need today's club snapshot from EA. It appears after the collector's next daily run." : "No comparison data saved yet for this group."); wire(); return; }
+  const us = clubRow({ id: 387937, name: "Al Haramis FC", sr: snap.skillRating, div: snap.currentDivision, gp: snap.gamesPlayed, w: snap.wins, d: snap.ties, l: snap.losses, gf: snap.goals, ga: snap.goalsAgainst, members: snap.members });
+  const cl = (g.clubs || []).map(clubRow);
+  const all = cl.concat([us]);
+  // players: everyone in the group with 5+ games, by favourite position
+  const gp = cl.flatMap(c => c.members.filter(m => m.gp >= 5).map(m => ({ ...playerRow(m), club: c.name })));
+  const ours = (snap.members || []).filter(m => m.gp > 0).map(playerRow).sort((a, b) => b.gp - a.gp);
+  const sortKey = S.cmpSort || "sr";
+  const ranked = all.slice().sort((a, b) => (b[sortKey] ?? -1e9) - (a[sortKey] ?? -1e9));
+  const posOrder = ["forward", "midfielder", "defender", "goalkeeper"];
+  el.innerHTML = `
+  <div class="block"><div class="block-head"><h2>Compare with other clubs</h2>${seg}</div>
+    <p class="note">${esc(g.label)}. ${esc(g.method || "")} Club and player figures are EA's own season totals at each club, collected ${esc(dateFmt(Date.parse(g.takenAt) / 1000))}. The match type and date filters above don't apply here.</p></div>
+
+  <div class="block"><div class="block-head"><h3>Club against club</h3><span class="note">Al Haramis vs the middle club (median) and the best club in this group. Rank is out of ${all.length}.</span></div>
+    <div class="tablewrap"><table class="cmpt"><thead><tr><th></th><th class="n">Al Haramis</th><th class="n">Group median</th><th class="n">Group best</th><th class="n">Our rank</th></tr></thead><tbody>
+    ${CLUB_M.map(([k, lab, fmt, better]) => { const vals = cl.map(c => c[k]); const best = better < 0 ? Math.min(...vals.filter(v => v != null)) : Math.max(...vals.filter(v => v != null)); const md = median(vals);
+      const rank = better === 0 ? null : 1 + all.filter(c => c !== us && c[k] != null && (better > 0 ? c[k] > us[k] : c[k] < us[k])).length;
+      const cls = us[k] == null || md == null || better === 0 ? "" : (us[k] - md) * better > 0 ? "up" : (us[k] - md) * better < 0 ? "down" : "";
+      return `<tr><td>${lab}</td><td class="n"><b class="${cls}">${fmt(us[k])}</b></td><td class="n">${fmt(md)}</td><td class="n muted">${fmt(best)}</td><td class="n">${rank == null || us[k] == null ? "–" : rank + " / " + all.length}</td></tr>`; }).join("")}
+    </tbody></table></div></div>
+
+  <div class="block"><div class="block-head"><h3>The ${cl.length} clubs and us</h3><span class="note">Click a heading to sort, or a club to see its players.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>#</th><th>Club</th>${[["sr", "Skill"], ["div", "Div"], ["gp", "Games"], ["winPct", "Win %"], ["ppg", "Pts / gm"], ["gfpg", "GF / gm"], ["gapg", "GA / gm"], ["passPct", "Pass %"], ["tklPct", "Tackle %"], ["rating", "Avg rating"], ["squad", "Players"]].map(([k, l]) => `<th class="n sortable" data-cs="${k}" ${sortKey === k ? 'aria-sort="descending"' : ""}>${l}${sortKey === k ? " ▼" : ""}</th>`).join("")}</tr></thead><tbody>
+    ${ranked.map((c, i) => { const me = c === us, open = S.openClub === c.id && !me;
+      return `<tr class="${me ? "us-row" : "clickable"}" data-club="${c.id}"><td class="n muted">${i + 1}</td><td>${me ? "<b>Al Haramis FC</b>" : esc(c.name)}</td><td class="n">${f0(c.sr)}</td><td class="n">${c.div ?? "–"}</td><td class="n">${c.gp}</td><td class="n">${fp(c.winPct)}</td><td class="n">${f2(c.ppg)}</td><td class="n">${f2(c.gfpg)}</td><td class="n">${f2(c.gapg)}</td><td class="n">${fp(c.passPct)}</td><td class="n">${fp(c.tklPct)}</td><td class="n">${f1(c.rating)}</td><td class="n">${c.squad}</td></tr>
+      ${open ? `<tr class="detail"><td colspan="13">${clubPlayers(c)}</td></tr>` : ""}`; }).join("")}
+    </tbody></table></div></div>
+
+  <div class="block"><div class="block-head"><h2>Our players against theirs</h2><span class="note">Each of our players is compared with every player in this group who plays the same position and has 5+ games (${gp.length} players in all). Bold = our value, grey = their median, coloured number = our percentile (higher is better; 75th+ green, 25th or below red).</span></div>
+    <div class="tablewrap"><table class="pcmp"><thead><tr><th>Player</th><th>Position</th><th class="n">Games</th><th class="n">Compared with</th>${PLAYER_M.map(([, l]) => `<th class="n">${l}</th>`).join("")}</tr></thead><tbody>
+    ${ours.map(o => { const peers = gp.filter(x => x.fav === o.fav);
+      return `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(o.p)}"></span>${esc(o.p)}</span>${o.gp < 5 ? ` <span class="muted">(few games)</span>` : ""}</td><td>${esc(posName(o.fav))}</td><td class="n">${o.gp}</td><td class="n">${peers.length}</td>
+      ${PLAYER_M.map(([k, , fmt, better]) => { const arr = peers.map(x => x[k]); return `<td class="n"><b>${fmt(o[k])}</b> <span class="muted">${fmt(median(arr))}</span> ${pbadge(pctile(o[k], arr), better)}</td>`; }).join("")}</tr>`; }).join("")}
+    </tbody></table></div></div>
+
+  <div class="block"><div class="block-head"><h2>Best in this group by position</h2><span class="note">Top 5 by average rating among players with 10+ games, with our best at that position for reference.</span></div>
+    <div class="grid g2">${posOrder.filter(p => gp.some(x => x.fav === p)).map(p => { const top = gp.filter(x => x.fav === p && x.gp >= 10).sort((a, b) => b.rating - a.rating).slice(0, 5); const mine = ours.filter(x => x.fav === p).sort((a, b) => b.rating - a.rating)[0];
+      return `<div class="area"><h3>${esc(posName(p))}s</h3><div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Player</th><th>Club</th><th class="n">Games</th><th class="n">Rating</th><th class="n">G+A / gm</th></tr></thead><tbody>
+      ${top.map(x => `<tr><td>${esc(x.p)}</td><td class="muted">${esc(x.club)}</td><td class="n">${x.gp}</td><td class="n">${f1(x.rating)}</td><td class="n">${f2(x.gapg)}</td></tr>`).join("")}
+      ${mine ? `<tr class="us-row"><td><b>${esc(mine.p)}</b></td><td>Al Haramis</td><td class="n">${mine.gp}</td><td class="n">${f1(mine.rating)}</td><td class="n">${f2(mine.gapg)}</td></tr>` : ""}
+      </tbody></table></div></div>`; }).join("")}</div></div>
+  <p class="note">"Top 20 clubs" includes a few one-player clubs whose totals look unusual (for example 109 wins from 109 games). They are kept as EA reports them. Favourite position is EA's label for where each player plays most.</p>`;
+  wire();
+  el.querySelectorAll("th[data-cs]").forEach(th => th.addEventListener("click", () => { S.cmpSort = th.dataset.cs; render(); }));
+  el.querySelectorAll("tr.clickable[data-club]").forEach(tr => tr.addEventListener("click", () => { const id = +tr.dataset.club; S.openClub = S.openClub === id ? null : id; render(); }));
+  function wire() { el.querySelectorAll("#cmpSeg button").forEach(b => b.addEventListener("click", () => { S.cmpGroup = b.dataset.g; try { localStorage.setItem("ah.cmp", S.cmpGroup); } catch (e) {} render(); })); }
+}
+function clubPlayers(c) {
+  const ps = c.members.map(playerRow).sort((a, b) => b.gp - a.gp);
+  return `<div style="overflow-x:auto"><table><thead><tr><th>Player</th><th>Position</th><th class="n">Games</th><th class="n">Rating</th><th class="n">Goals / gm</th><th class="n">Assists / gm</th><th class="n">Passes / gm</th><th class="n">Pass %</th><th class="n">Tackle %</th><th class="n">Win %</th><th class="n">OVR</th></tr></thead><tbody>
+  ${ps.map(x => `<tr><td>${esc(x.p)}</td><td>${esc(posName(x.fav))}</td><td class="n">${x.gp}</td><td class="n">${f1(x.rating)}</td><td class="n">${f2(x.gpg)}</td><td class="n">${f2(x.apg)}</td><td class="n">${f1(x.pmpg)}</td><td class="n">${fp(x.passPct)}</td><td class="n">${fp(x.tklPct)}</td><td class="n">${fp(x.wr)}</td><td class="n">${x.ovr ?? "–"}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function renderMatches(ms) {
+  const el = $("#p-matches"); charts.length = 0;
+  if (!ms.length) { el.innerHTML = emptyState(); return; }
+  const rows = ms.slice().reverse();
+  el.innerHTML = `<div class="block"><div class="block-head"><h2>Match log</h2><span class="note">Newest first. Tap a match for every player's line.</span></div>
+  <div class="tablewrap"><table><thead><tr><th>Kick-off</th><th>Opponent</th><th>Type</th><th class="n">Score</th><th>Result</th><th class="n">Humans</th><th class="n">Shots</th><th class="n">Pass %</th><th class="n">Pass share</th><th class="n">Tackles won</th><th>Top rated</th></tr></thead><tbody>
+  ${rows.map(m => { const top = m._players.slice().sort((a, b) => b.r - a.r)[0]; const open = S.openMatch === m.id;
+    return `<tr class="clickable" data-m="${esc(m.id)}" aria-expanded="${open}"><td>${esc(dateFmt(m.ts))} <span class="muted">· S${m._sess} G${m._game}</span>${S.newIds.has(m.id) ? `<span class="pill">New</span>` : ""}</td><td>${esc(m.opp)}</td><td>${m.type === "playoff" ? "Playoff" : "League"}</td><td class="n">${m.gf}-${m.ga}</td><td><span class="chip sm ${m.res}">${m.res}</span></td><td class="n">${m.humans} v ${m.oppHumans}</td><td class="n">${m.us.shots}-${m.them.shots}</td><td class="n">${fp(pct(m.us.pm, m.us.pa))}</td><td class="n">${fp(pct(m.us.pa, m.us.pa + m.them.pa))}</td><td class="n">${m.us.tm}/${m.us.ta}</td><td>${top ? esc(top.p) + " " + f1(top.r) : "–"}</td></tr>
+    ${open ? `<tr class="detail"><td colspan="11">${matchDetail(m)}</td></tr>` : ""}`; }).join("")}
+  </tbody></table></div></div>`;
+  el.querySelectorAll("tr.clickable").forEach(tr => tr.addEventListener("click", () => { S.openMatch = S.openMatch === tr.dataset.m ? null : tr.dataset.m; render(); }));
+}
+function matchDetail(m) {
+  return `<div style="overflow-x:auto"><table><thead><tr><th>Player</th><th>Role</th><th>Pos</th><th class="n">Rating</th><th class="n">G</th><th class="n">A</th><th class="n">Shots</th><th class="n">Passes made</th><th class="n">Missed</th>${recvCode() ? `<th class="n">Received</th>` : ""}<th class="n">Tackles</th><th class="n">Min</th><th class="n">Idle s</th><th>MOTM</th></tr></thead><tbody>
+  ${m._players.map(p => { const rv = recvOf(p); return `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(p.p)}"></span>${esc(p.p)}</span></td><td>${esc(roleName(p.arch))}</td><td>${esc(p.pos)}</td><td class="n">${f1(p.r)}</td><td class="n">${p.g}</td><td class="n">${p.a}</td><td class="n">${p.sh}</td><td class="n">${p.pm}</td><td class="n">${p.pa - p.pm}</td>${recvCode() ? `<td class="n">${rv == null ? "–" : rv}</td>` : ""}<td class="n">${p.tm}/${p.ta}</td><td class="n">${f0(Math.min(p.sec || 0, 1500) / 60)}</td><td class="n">${p.idle ?? "–"}</td><td>${p.mom ? "★" : ""}</td></tr>`; }).join("")}
+  </tbody></table></div><p class="note" style="margin:8px 0 0">Opponent humans averaged a ${f1(m.them.rating)} rating. ${m.gf - (m.us.hg ?? 0) > 0 ? (m.gf - (m.us.hg ?? 0)) + " of our goals came from AI teammates." : ""}</p>${oppLines(m.id, m.opp)}`;
+}
+function oppLines(id, name) {
+  const o = S.oppm[id];
+  if (!o || !o.players || !o.players.length) return "";
+  return `<h3 style="margin:14px 0 6px">${esc(name || o.opp)} players</h3><div style="overflow-x:auto"><table><thead><tr><th>Player</th><th>Pos</th><th class="n">Rating</th><th class="n">G</th><th class="n">A</th><th class="n">Shots</th><th class="n">Passes made</th><th class="n">Pass %</th><th class="n">Tackles</th><th class="n">Min</th><th>MOTM</th></tr></thead><tbody>
+  ${o.players.map(p => `<tr${p.sec ? "" : ' class="muted"'}><td>${esc(p.p)}${p.sec ? "" : ' <span class="muted">(left early)</span>'}</td><td>${esc(p.pos)}</td><td class="n">${f1(p.r)}</td><td class="n">${p.g}</td><td class="n">${p.a}</td><td class="n">${p.sh}</td><td class="n">${p.pm}</td><td class="n">${fp(pct(p.pm, p.pa))}</td><td class="n">${p.tm}/${p.ta}</td><td class="n">${f0(Math.min(p.sec || 0, 1500) / 60)}</td><td>${p.mom ? "★" : ""}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+/* ---------- opponents ---------- */
+function renderOpponents(ms) {
+  const el = $("#p-opponents"); charts.length = 0;
+  if (!ms.length) { el.innerHTML = emptyState(); return; }
+  const by = {};
+  ms.forEach(m => { const k = String(m.oppId); (by[k] ||= { id: k, name: m.opp, games: [] }).games.push(m); });
+  const rows = Object.values(by).map(r => {
+    const g = r.games, o = S.opps[r.id] || {};
+    const W = g.filter(m => m.res === "W").length, D = g.filter(m => m.res === "D").length, L = g.length - W - D;
+    const theirGp = o.gamesPlayed || 0;
+    return { ...r, o, n: g.length, W, D, L, gf: sum(g, m => m.gf), ga: sum(g, m => m.ga), last: g.at(-1).ts,
+      sr: o.skillRating ?? null, theirWin: theirGp ? 100 * o.wins / theirGp : null, theirPpg: theirGp ? (3 * o.wins + o.ties) / theirGp : null,
+      theirGd: theirGp ? (o.goals - o.goalsAgainst) / theirGp : null, humRating: avg(g.filter(m => m.them.rating != null), m => m.them.rating),
+      oppH: avg(g, m => m.oppHumans), pts: sum(g, m => m._pts) / g.length };
+  });
+  const key = S.oppSort;
+  rows.sort((a, b) => key === "name" ? a.name.localeCompare(b.name) : (b[key] ?? -1e9) - (a[key] ?? -1e9));
+  const withSr = rows.filter(r => r.sr != null);
+  const srs = withSr.map(r => r.sr).sort((a, b) => a - b), mid = median(srs);
+  const band = r => r.sr == null ? null : r.sr >= mid ? "strong" : "weak";
+  const bandStats = b => { const g = rows.filter(r => band(r) === b).flatMap(r => r.games); return { n: g.length, ppg: avg(g, m => m._pts), gd: avg(g, m => m._gd) }; };
+  const st = bandStats("strong"), wk = bandStats("weak");
+  const ourSr = S.snaps[0]?.skillRating;
+  // standout opponent players from saved line-ups
+  const oppPlayers = Object.values(S.oppm).filter(o => S.byId[o.matchId] && ms.includes(S.byId[o.matchId]))
+    .flatMap(o => (o.players || []).filter(p => p.sec > 0).map(p => ({ ...p, club: o.opp, m: S.byId[o.matchId] })));
+  const top = oppPlayers.slice().sort((a, b) => b.r - a.r || (b.g + b.a) - (a.g + a.a)).slice(0, 12);
+  const cols = [["name", "Opponent"], ["n", "Games"], ["pts", "Pts / gm vs them"], ["sr", "Skill"], ["theirWin", "Their win %"], ["theirGd", "Their GD / gm"], ["humRating", "Their humans' rating"], ["oppH", "Their humans"], ["last", "Last met"]];
+  el.innerHTML = `
+  <div class="kpis">
+    <div class="kpi"><span class="l">Opponents faced</span><span class="v num">${rows.length}</span><span class="s">${ms.length} games in this range</span></div>
+    <div class="kpi"><span class="l">Their median skill</span><span class="v num">${f0(mid)}</span><span class="s">Ours ${ourSr ?? "–"}</span></div>
+    <div class="kpi"><span class="l">vs stronger half</span><span class="v num">${f2(st.ppg)}</span><span class="s">pts/game · ${st.n} games · GD ${st.gd == null ? "–" : (st.gd > 0 ? "+" : "") + f1(st.gd)}</span></div>
+    <div class="kpi"><span class="l">vs weaker half</span><span class="v num">${f2(wk.ppg)}</span><span class="s">pts/game · ${wk.n} games · GD ${wk.gd == null ? "–" : (wk.gd > 0 ? "+" : "") + f1(wk.gd)}</span></div>
+  </div>
+  <div class="block"><div class="block-head"><h2>Every club we've played</h2><span class="note">Club figures are EA's season totals for that club, saved when we last played them. Click a heading to sort, or a club for each meeting and their players.</span></div>
+    <div class="tablewrap"><table><thead><tr>${cols.map(([k, l]) => `<th class="sortable ${k === "name" ? "" : "n"}" data-os="${k}" ${key === k ? 'aria-sort="descending"' : ""}>${l}${key === k ? " ▼" : ""}</th>`).join("")}<th>Record vs them</th><th>Their season</th></tr></thead><tbody>
+    ${rows.map(r => { const open = S.openOpp === r.id;
+      return `<tr class="clickable" data-opp="${esc(r.id)}" aria-expanded="${open}"><td><b>${esc(r.name)}</b></td><td class="n">${r.n}</td><td class="n">${f2(r.pts)}</td><td class="n">${r.sr ?? "–"}${r.sr != null && ourSr ? ` <span class="${r.sr > ourSr ? "down" : "up"}" style="font-size:.78rem">${r.sr > ourSr ? "+" : ""}${r.sr - ourSr}</span>` : ""}</td><td class="n">${fp(r.theirWin)}</td><td class="n">${r.theirGd == null ? "–" : (r.theirGd > 0 ? "+" : "") + f2(r.theirGd)}</td><td class="n">${f1(r.humRating)}</td><td class="n">${f1(r.oppH)}</td><td class="n">${esc(dayFmt(r.last))}</td>
+        <td>${r.games.map(m => `<span class="chip sm ${m.res}" title="${esc(dateFmt(m.ts))} ${m.gf}-${m.ga}">${m.res}</span>`).join(" ")} <span class="num muted">${r.gf}:${r.ga}</span></td>
+        <td class="muted">${r.o.gamesPlayed ? `${r.o.wins}-${r.o.ties}-${r.o.losses} · ${r.o.gamesPlayed} gm` : "–"}</td></tr>
+        ${open ? `<tr class="detail"><td colspan="11">${oppDetail(r)}</td></tr>` : ""}`; }).join("")}
+    </tbody></table></div>
+    <p class="note" style="margin-top:8px">Skill difference is their rating minus ours (${ourSr ?? "–"}); red means they were rated higher. Player lines for opponents are saved for games from 13 October onwards.</p></div>
+  ${top.length ? `<div class="block"><div class="block-head"><h2>Best opponent players we've faced</h2><span class="note">Highest single-game ratings against us.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Player</th><th>Club</th><th>Date</th><th>Result</th><th>Pos</th><th class="n">Rating</th><th class="n">G</th><th class="n">A</th><th class="n">Shots</th><th class="n">Pass %</th><th class="n">Tackles</th></tr></thead><tbody>
+    ${top.map(p => `<tr><td><b>${esc(p.p)}</b>${p.mom ? " ★" : ""}</td><td>${esc(p.club)}</td><td>${esc(dayFmt(p.m.ts))}</td><td><span class="chip sm ${p.m.res}">${p.m.res}</span> <span class="num">${p.m.gf}-${p.m.ga}</span></td><td>${esc(p.pos)}</td><td class="n">${f1(p.r)}</td><td class="n">${p.g}</td><td class="n">${p.a}</td><td class="n">${p.sh}</td><td class="n">${fp(pct(p.pm, p.pa))}</td><td class="n">${p.tm}/${p.ta}</td></tr>`).join("")}
+    </tbody></table></div></div>` : ""}`;
+  el.querySelectorAll("th[data-os]").forEach(th => th.addEventListener("click", () => { S.oppSort = th.dataset.os; render(); }));
+  el.querySelectorAll("tr.clickable[data-opp]").forEach(tr => tr.addEventListener("click", () => { S.openOpp = S.openOpp === tr.dataset.opp ? null : tr.dataset.opp; render(); }));
+}
+function oppDetail(r) {
+  const o = r.o;
+  const season = o.gamesPlayed ? `<p class="note" style="margin:0 0 8px">${esc(r.name)}: skill rating ${o.skillRating}, ${o.wins}-${o.ties}-${o.losses} in ${o.gamesPlayed} league games, ${o.goals}:${o.goalsAgainst} goals, ${o.promotions} promotions, ${o.relegations} relegations${o.playoffGames ? `, ${o.playoffGames} playoff games` : ""}. Saved ${esc(dateFmt(Date.parse(o.statsAt) / 1000))}.</p>` : "";
+  return season + r.games.slice().reverse().map(m => `<div style="margin:6px 0 12px"><b>${esc(dateFmt(m.ts))}</b> · ${m.type === "playoff" ? "Playoff" : "League"} · <span class="chip sm ${m.res}">${m.res}</span> <span class="num">${m.gf}-${m.ga}</span> · humans ${m.humans} v ${m.oppHumans} · shots ${m.us.shots}-${m.them.shots} · pass share ${fp(pct(m.us.pa, m.us.pa + m.them.pa))}
+    ${oppLines(m.id, r.name) || `<div class="note">Their player lines weren't saved for this game (collected before opponent tracking began).</div>`}</div>`).join("");
+}
+
+/* ---------- predictions (the one model: hierarchical Poisson / Negative Binomial, trained by the collector) ---------- */
+function recordDist(p, n) {
+  // exact distribution of wins and points over n games with the same W/D/L chances each game
+  let dist = new Map([["0,0", 1]]);
+  for (let i = 0; i < n; i++) { const nx = new Map();
+    dist.forEach((pr, k) => { const [w, d] = k.split(",").map(Number);
+      [[w + 1, d, p.W], [w, d + 1, p.D], [w, d, p.L]].forEach(([a, b, q]) => { const kk = a + "," + b; nx.set(kk, (nx.get(kk) || 0) + pr * q); }); });
+    dist = nx; }
+  const winsP = new Array(n + 1).fill(0), ptsP = new Array(3 * n + 1).fill(0);
+  dist.forEach((pr, k) => { const [w, d] = k.split(",").map(Number); winsP[w] += pr; ptsP[3 * w + d] += pr; });
+  const q = (arr, t) => { let c = 0; for (let i = 0; i < arr.length; i++) { c += arr[i]; if (c >= t) return i; } return arr.length - 1; };
+  return { eW: n * p.W, eD: n * p.D, eL: n * p.L, ePts: n * (3 * p.W + p.D), w10: q(winsP, 0.1), w90: q(winsP, 0.9), p10: q(ptsP, 0.1), p90: q(ptsP, 0.9),
+    pWinning: [...dist].reduce((t, [k, pr]) => { const [w, d] = k.split(",").map(Number); return t + (w > n - w - d ? pr : 0); }, 0) };
+}
+function probBar(p) {
+  return `<div style="display:flex;height:14px;border-radius:4px;overflow:hidden;min-width:120px" title="Win ${fp(100 * p.W)} · Draw ${fp(100 * p.D)} · Loss ${fp(100 * p.L)}"><span style="width:${100 * p.W}%;background:var(--good)"></span><span style="width:${100 * p.D}%;background:#8a8f99"></span><span style="width:${100 * p.L}%;background:var(--crit)"></span></div>`;
+}
+function trust(ok) { return ok ? `<span class="tag" style="background:color-mix(in srgb,var(--good) 18%,var(--surface));color:var(--good-ink)">beats simple average</span>` : `<span class="tag" style="background:color-mix(in srgb,var(--warn) 22%,var(--surface))">no better than average yet</span>`; }
+function renderPredict() {
+  const el = $("#p-predict"); charts.length = 0;
+  const BASE = S.model;
+  if (!BASE) { el.innerHTML = emptyState("The model hasn't been trained yet. The collector retrains it whenever it saves new games."); return; }
+  const M = modelView(BASE);
+  if (M.status !== "ok") { el.innerHTML = emptyState(`The model needs more games before it can predict (${M.nMatches || 0} saved).`); return; }
+  const stale = S.all.length && S.all.at(-1).ts > (M.lastMatchTs || 0);
+  const bb = M.beatsBaseline || {};
+  const selC = M.lineupTable ? comboFor(M.lineupTable, availSet(M)) : null;
+  const setP = S.predSet === "usual" ? M.record.usualSquad.probs : S.predSet === "model" || !selC ? M.bestLineup.probs : selC.probs;
+  const R = recordDist(setP, S.predN);
+  // playoff games already played since the model was last trained on a non-playoff run: show actual so far
+  const cutoff = Date.now() / 1000 - 4 * 86400;
+  const po = S.all.filter(m => m.type === "playoff" && m.ts >= cutoff);
+  const poW = po.filter(m => m.res === "W").length, poD = po.filter(m => m.res === "D").length, poL = po.length - poW - poD;
+  const left = Math.max(0, S.predN - po.length), Rl = recordDist(setP, left);
+  const sizes = Object.keys(M.lineups || {}).sort();
+  const size = S.lineSize && M.lineups[S.lineSize] ? S.lineSize : String(M.bestLineup.size);
+  const wf = M.match.walkForward || [];
+  const tgt = M.playerEval || {};
+  const PT = [["r", "Rating", f1], ["g", "Goals", f2], ["a", "Assists", f2], ["sh", "Shots", f1], ["pm", "Passes made", f1], ["tm", "Tackles won", f2]];
+  el.innerHTML = `
+  ${modelSummary(M)}
+  <div class="block"><div class="block-head"><h2>Playoff forecast</h2><span class="note">${esc(M.name || "XGBoost")} model trained on ${M.nMatches} games and ${M.nApps} player appearances · updated ${esc(dateFmt(Date.parse(M.trainedAt) / 1000))}${stale ? ` · <span style="color:var(--crit)">newer games saved; retrains on the next collector run</span>` : ""}</span></div>
+    <div class="filters" style="margin-bottom:10px">
+      <div class="seg" role="group" aria-label="Lineup" id="pSet"><button data-v="best" aria-pressed="${S.predSet === "best"}">Available players</button><button data-v="model" aria-pressed="${S.predSet === "model"}">Model\'s pick</button><button data-v="usual" aria-pressed="${S.predSet === "usual"}">Usual squad</button></div>
+      <div class="seg" role="group" aria-label="Playoff games" id="pN">${[5, 10, 15, 20].map(n => `<button data-v="${n}" aria-pressed="${S.predN === n}">${n} games</button>`).join("")}</div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="l">Each game</span><span class="v num">${fp(100 * setP.W)}</span><span class="s">win · ${fp(100 * setP.D)} draw · ${fp(100 * setP.L)} loss</span>${probBar(setP)}</div>
+      ${S.predSet === "best" && selC && selC.xGF != null ? `<div class="kpi"><span class="l">Expected score</span><span class="v num">${f1(selC.xGF)}–${f1(selC.xGA)}</span><span class="s">per game with the ticked players</span></div>` : ""}
+      <div class="kpi"><span class="l">Expected record</span><span class="v num">${f0(R.eW)}-${f0(R.eD)}-${f0(R.eL)}</span><span class="s">over ${S.predN} games · W-D-L</span></div>
+      <div class="kpi"><span class="l">Likely wins</span><span class="v num">${R.w10}–${R.w90}</span><span class="s">8 in 10 chance the win total lands here</span></div>
+      <div class="kpi"><span class="l">Points</span><span class="v num">${f0(R.ePts)}</span><span class="s">likely ${R.p10}–${R.p90} · ${fp(100 * R.pWinning)} chance of more wins than losses</span></div>
+      ${po.length ? `<div class="kpi"><span class="l">Playoffs so far</span><span class="v num">${poW}-${poD}-${poL}</span><span class="s">${left} left → projected final ${poW + Math.round(Rl.eW)}-${poD + Math.round(Rl.eD)}-${poL + Math.round(Rl.eL)}</span></div>` : ""}
+    </div>
+    <p class="note" style="margin-top:8px">${M.form ? `Current form: ${fp(100 * M.form.winRate5)} wins and ${M.form.gd5 > 0 ? "+" : ""}${f1(M.form.gd5)} goal difference a game over the last 5. ` : ""}Assumes opponents like the ones you've faced recently (skill ${M.scenario.oppSkill}, ${M.scenario.oppHumans} humans)${M.oppStrength ? M.oppStrength.used ? ", predicted from your form" : "" : ""}. EA doesn't publish how many playoff games there are, so pick the number above. "Available players" uses the players ticked in the lineup builder below${selC ? ` (${selC.players.length})` : ""}; "Usual squad" uses the mix from your last 10 games.</p></div>
+
+  ${lineupBuilder(M)}
+
+  <div class="block"><div class="block-head"><h2>Model's overall picks</h2><span class="note">Across every lineup that has actually played. The recommendation must have played together at least twice.</span></div>
+    <div class="grid g2">
+      <div class="area"><div class="eyebrow">Recommended · ${M.bestLineup.size} humans</div>
+        <div class="tags" style="gap:8px">${M.bestLineup.players.map(p => `<span class="pname" style="background:var(--surface2);border-radius:8px;padding:6px 10px"><span class="sw" style="background:${S.colorOf(p.p)}"></span>${esc(p.p)} <span class="muted" style="font-weight:400">${esc(POS_SHORT[p.pos] || p.pos)}</span></span>`).join("")}</div>
+        <div>${probBar(M.bestLineup.probs)}</div>
+        <div class="note">Predicted goal difference ${M.bestLineup.predGD > 0 ? "+" : ""}${f2(M.bestLineup.predGD)} a game · ${f2(M.bestLineup.xPts)} expected points · ${M.bestLineup.gamesTogether} games together so far.</div>
+      </div>
+      <div class="area"><div class="block-head" style="margin:0"><div class="eyebrow">Top 5 by squad size</div><div class="seg" role="group" aria-label="Squad size" id="pSize">${sizes.map(s => `<button data-v="${s}" aria-pressed="${s === size}">${s}</button>`).join("")}</div></div>
+        <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Lineup</th><th class="n">Win %</th><th class="n">xPts</th><th class="n">Together</th></tr></thead><tbody>
+        ${(M.lineups[size] || []).map(l => `<tr><td>${l.players.map(p => esc(p.p)).join(", ")}</td><td class="n">${fp(100 * l.probs.W)}</td><td class="n">${f2(l.xPts)}</td><td class="n ${l.gamesTogether < 2 ? "down" : ""}">${l.gamesTogether}</td></tr>`).join("")}
+        </tbody></table></div><div class="note">All are real lineups; red = only one game together.</div></div>
+    </div></div>
+
+  <div class="block"><div class="block-head"><h2>Player forecasts</h2><span class="note">Expected per-game numbers in a playoff game, from the model, next to each player's average so far. The range covers typical game-to-game swings.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Player</th><th>Pos</th><th class="n">Games</th>${PT.map(([k, l]) => `<th class="n">${l}</th>`).join("")}</tr></thead><tbody>
+    ${M.players.map(p => `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(p.p)}"></span>${esc(p.p)}</span></td><td>${esc(POS_SHORT[p.pos] || p.pos)}</td><td class="n">${p.apps}</td>
+      ${PT.map(([k, , fmt]) => `<td class="n" title="Range ${fmt(p.range[k][0])}–${fmt(p.range[k][1])}"><b>${fmt(p.pred[k])}</b> <span class="muted">${fmt(p.avg[k])}</span></td>`).join("")}</tr>`).join("")}
+    </tbody></table></div>
+    <p class="note" style="margin-top:8px">Bold = model forecast, grey = season average. Hover a number for its range.</p></div>
+
+  <div class="block"><div class="block-head"><h2>How much to trust it</h2><span class="note">Each session is predicted using only the games before it, then checked against what happened. Lower error is better; "simple average" just guesses the past average.</span></div>
+    <div class="grid g2">
+      <div class="area"><h3>Results model</h3>
+        <div class="tags">${trust(bb.match)}</div>
+        <div class="note">Average miss on goal difference: <b>${f2(M.match.modelMAE)}</b> goals a game vs ${f2(M.match.baselineMAE)} for the simple average.${M.match.logLoss != null ? ` Win/draw/loss log loss <b>${f3(M.match.logLoss)}</b> vs ${f3(M.match.baselineLogLoss)}.` : ""}</div>
+        <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Session</th><th class="n">Games</th><th class="n">Predicted GD</th><th class="n">Actual GD</th><th class="n">Model miss</th><th class="n">Average miss</th></tr></thead><tbody>
+        ${wf.map(w => `<tr><td>${esc(w.date)}</td><td class="n">${w.games}</td><td class="n">${w.predGD > 0 ? "+" : ""}${f1(w.predGD)}</td><td class="n">${w.actualGD > 0 ? "+" : ""}${w.actualGD}</td><td class="n ${w.modelMAE <= w.baselineMAE ? "up" : "down"}">${f2(w.modelMAE)}</td><td class="n muted">${f2(w.baselineMAE)}</td></tr>`).join("")}
+        </tbody></table></div></div>
+      <div class="area"><h3>Player models</h3>
+        <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Stat</th><th class="n">Model miss</th><th class="n">Average miss</th><th></th></tr></thead><tbody>
+        ${Object.entries(tgt).map(([k, v]) => `<tr><td>${esc(v.label)}</td><td class="n">${f2(v.modelMAE)}</td><td class="n muted">${f2(v.baselineMAE)}</td><td>${trust(bb[k])}</td></tr>`).join("")}
+        </tbody></table></div>
+        ${M.scoreline ? `<div class="note">Expected scoreline misses by <b>${f2(M.scoreline.modelMAE)}</b> goals per side vs ${f2(M.scoreline.baselineMAE)} for the simple average.</div>` : ""}
+        ${M.oppStrength ? `<div class="note">Predicting the next opponent's skill rating from your recent form misses by ${f0(M.oppStrength.modelMAE)} points vs ${f0(M.oppStrength.baselineMAE)} for just using the median, so it is ${M.oppStrength.used ? "<b>used</b>" : "<b>not used yet</b>; each retrain re-checks it"}.</div>` : ""}
+        <div class="note">With ${M.nApps} appearances the player models mostly match each player's own average; they should pull ahead as playoff games are added.</div></div>
+    </div>
+    ${S.modelRuns.length > 1 ? `<div class="block" style="margin-top:16px"><h3>Error after each retrain</h3><div class="chart" id="cRuns"></div>${S.modelRuns.some(r => !r.model) ? `<div class="note">Retrains before ${esc(dayFmt(Date.parse((S.modelRuns.find(r => r.model) || S.modelRuns.at(-1)).trainedAt) / 1000))} used the old XGBoost model with post-game opponent ratings, so their errors aren't comparable.</div>` : ""}</div>` : ""}
+  </div>
+
+  <div class="grid g2">
+    <div class="area"><h3>What drives results</h3><div class="note">${M.key === "poisson" ? "Size of each factor's effect on goals scored and conceded." : M.key === "kalman" ? "Size of each player's current strength rating, either way." : "Share of the model's splits each factor accounts for."}</div>${splitBars((M.match.importance || []).map(i => ({ label: impLabel(i.f), v: 100 * i.share, n: "" })), 100, fp).replace(/ <span class="muted">· (undefined|) gm<\/span>/g, "")}</div>
+    ${M.key === "xgb" || !M.key ? `<div class="area"><h3>What drives player ratings</h3><div class="note">Same measure for the rating model.</div>${splitBars((M.playerImportance || []).map(i => ({ label: impLabel(i.f), v: 100 * i.share, n: "" })), 100, fp).replace(/ <span class="muted">· (undefined|) gm<\/span>/g, "")}</div>` : modelDetails(M)}
+  </div>
+  <p class="note">${(M.notes || []).map(esc).join(" ")} The model is retrained by the collector every time new games are saved, so each session's games feed the next forecast.</p>`;
+  const segWire = (id, fn) => el.querySelectorAll(id + " button").forEach(b => b.addEventListener("click", () => { fn(b.dataset.v); render(); }));
+  segWire("#pSet", v => S.predSet = v);
+  segWire("#pN", v => { S.predN = +v; try { localStorage.setItem("ah.predN", v); } catch (e) {} });
+  segWire("#pSize", v => S.lineSize = v);
+  el.querySelectorAll("[data-avail]").forEach(b => b.addEventListener("click", () => {
+    const n = b.dataset.avail, a = new Set(availSet(M)); a.has(n) ? a.delete(n) : a.add(n);
+    S.avail = [...a]; try { localStorage.setItem("ah.avail", JSON.stringify(S.avail)); } catch (e) {} render(); }));
+  el.querySelectorAll("[data-availall]").forEach(b => b.addEventListener("click", () => {
+    const v = b.dataset.availall, T = M.lineupTable;
+    S.avail = v === "all" ? T.roster.map(r => r.p) : v === "none" ? [] : T.roster.filter(r => r.regular).map(r => r.p);
+    try { localStorage.setItem("ah.avail", JSON.stringify(S.avail)); } catch (e) {} render(); }));
+  const rh = $("#cRuns");
+  if (rh) lineChart(rh, { h: 160, title: "Model error after each retrain", labels: S.modelRuns.map(r => dayFmt(Date.parse(r.trainedAt) / 1000)), min: 0, fmt: f2,
+    tipTitle: i => `${dateFmt(Date.parse(S.modelRuns[i].trainedAt) / 1000)} · ${S.modelRuns[i].nMatches} games`,
+    series: [{ name: "Model miss (GD)", color: "var(--us)", values: S.modelRuns.map(r => r.matchMAE) }, { name: "Average miss (GD)", color: "var(--them)", values: S.modelRuns.map(r => r.baselineMAE) }] });
+}
+/* ---------- lineup builder: availability filter -> formation and slots ---------- */
+const FORMATIONS = {
+  // slot: [name, line, x, y] on a 100x100 pitch (our goal at the bottom); lines listed in fill priority order
+  "4-3-3": [["ST", "F", 50, 14], ["LW", "F", 20, 20], ["RW", "F", 80, 20], ["CM", "M", 50, 44], ["LCM", "M", 30, 47], ["RCM", "M", 70, 47], ["LCB", "D", 38, 76], ["RCB", "D", 62, 76], ["LB", "D", 14, 70], ["RB", "D", 86, 70]],
+  "4-2-3-1": [["ST", "F", 50, 13], ["CAM", "M", 50, 32], ["LM", "M", 18, 34], ["RM", "M", 82, 34], ["LDM", "M", 38, 53], ["RDM", "M", 62, 53], ["LCB", "D", 38, 76], ["RCB", "D", 62, 76], ["LB", "D", 14, 70], ["RB", "D", 86, 70]],
+  "4-1-2-1-2": [["LS", "F", 30, 14], ["RS", "F", 70, 14], ["CAM", "M", 50, 31], ["LCM", "M", 30, 46], ["RCM", "M", 70, 46], ["CDM", "M", 50, 57], ["LCB", "D", 38, 77], ["RCB", "D", 62, 77], ["LB", "D", 14, 71], ["RB", "D", 86, 71]],
+  "4-4-2": [["LS", "F", 30, 15], ["RS", "F", 70, 15], ["LCM", "M", 38, 46], ["RCM", "M", 62, 46], ["LM", "M", 14, 42], ["RM", "M", 86, 42], ["LCB", "D", 38, 76], ["RCB", "D", 62, 76], ["LB", "D", 14, 70], ["RB", "D", 86, 70]],
+  "3-4-3": [["ST", "F", 50, 14], ["LW", "F", 20, 19], ["RW", "F", 80, 19], ["LCM", "M", 38, 46], ["RCM", "M", 62, 46], ["LM", "M", 12, 43], ["RM", "M", 88, 43], ["CB", "D", 50, 78], ["LCB", "D", 28, 75], ["RCB", "D", 72, 75]],
+  "3-5-2": [["LS", "F", 30, 14], ["RS", "F", 70, 14], ["CAM", "M", 50, 32], ["LDM", "M", 38, 52], ["RDM", "M", 62, 52], ["LM", "M", 12, 41], ["RM", "M", 88, 41], ["CB", "D", 50, 78], ["LCB", "D", 28, 75], ["RCB", "D", 72, 75]],
+};
+const FORM_ORDER = ["4-3-3", "4-2-3-1", "4-1-2-1-2", "4-4-2", "3-4-3", "3-5-2"];
+const LINE_OF = { D: "defender", M: "midfielder", F: "forward" };
+function availSet(M) {
+  const T = M.lineupTable, names = T.roster.map(r => r.p);
+  if (!S.avail) { try { const a = JSON.parse(localStorage.getItem("ah.avail") || "null"); if (Array.isArray(a)) S.avail = a; } catch (e) {} }
+  if (!S.avail) S.avail = T.roster.filter(r => r.regular).map(r => r.p);
+  return S.avail.filter(n => names.includes(n));
+}
+const POS_CODE = { defender: "D", goalkeeper: "D", midfielder: "M", forward: "F" };
+// only lineups that have really played together, made up entirely of available players
+function actualOptions(T, avail) {
+  const set = new Set(avail);
+  return (T.actual || []).filter(l => l.players.every(p => set.has(p.p)))
+    .map(l => ({ ...l, players: l.players.map(p => ({ p: p.p, line: POS_CODE[p.pos] || "M", pos: p.pos, r: T.roster.find(r => r.p === p.p) || { posRating: {} } })) }))
+    .sort((a, b) => (b.gamesTogether >= 2) - (a.gamesTogether >= 2) || b.xPts - a.xPts || b.gamesTogether - a.gamesTogether);
+}
+// the exact group the user picked: every one of them plays, positions chosen by the model
+const LINE_POS = { D: "defender", M: "midfielder", F: "forward" };
+function comboFor(T, avail) {
+  const idx = avail.map(n => T.roster.findIndex(r => r.p === n)).filter(i => i >= 0).sort((a, b) => a - b);
+  if (!idx.length || !T.combos) return null;
+  const c = T.combos[String(idx.reduce((t, i) => t + 2 ** i, 0))]; if (!c) return null;
+  const players = idx.map((i, k) => ({ p: T.roster[i].p, line: c[5][k], pos: LINE_POS[c[5][k]], r: T.roster[i] }));
+  const key = players.map(p => p.p).sort().join("|");
+  const real = (T.actual || []).find(l => l.players.map(p => p.p).sort().join("|") === key) || null;
+  return { players, gd: c[0], probs: { W: c[1], D: c[2], L: c[3] }, xPts: 3 * c[1] + c[2], gamesTogether: c[4], real, xGF: c[6], xGA: c[7] };
+}
+function pickFormation(players) {
+  const n = { F: 0, M: 0, D: 0 }; players.forEach(p => n[p.line]++);
+  let best = null;
+  FORM_ORDER.forEach((f, oi) => {
+    const slots = { F: 0, M: 0, D: 0 }; FORMATIONS[f].forEach(s => slots[s[1]]++);
+    // overflow: extra forwards move into midfield, extra midfielders into defence or attack
+    const over = Math.max(0, n.F - slots.F) + Math.max(0, n.M - slots.M) + Math.max(0, n.D - slots.D);
+    const score = over * 10 + Math.abs(slots.F - n.F) + 0.5 * Math.abs(slots.M - n.M) + 0.25 * Math.abs(slots.D - n.D) + oi * 0.01;
+    if (!best || score < best.score) best = { f, score };
+  });
+  return best.f;
+}
+function placePlayers(players, f, M) {
+  const slots = FORMATIONS[f].map(s => ({ name: s[0], line: s[1], x: s[2], y: s[3], who: null }));
+  const pred = n => (M.players.find(p => p.p === n) || {}).pred || {};
+  const att = n => (pred(n).g || 0) + (pred(n).a || 0) * 0.6, def = n => (pred(n).tm || 0);
+  const order = { F: (a, b) => att(b.p) - att(a.p), M: (a, b) => att(b.p) - att(a.p), D: (a, b) => def(b.p) - def(a.p) };
+  const fallback = { F: ["F", "M", "D"], M: ["M", "F", "D"], D: ["D", "M", "F"] };
+  ["F", "M", "D"].forEach(line => {
+    const group = players.filter(p => p.line === line).sort(order[line]);
+    group.forEach(p => {
+      for (const l of fallback[line]) {
+        // defensive midfield slots go to the player who wins the most tackles once attackers are placed
+        const free = slots.filter(s => s.line === l && !s.who);
+        if (free.length) { const s = line === "M" && group.length > 1 && p === group.at(-1) && free.find(x => /DM/.test(x.name)) || free[0]; s.who = p; break; }
+      }
+    });
+  });
+  return slots;
+}
+function pitchSvg(slots, M) {
+  const W = 300, H = 380, X = x => 10 + x * (W - 20) / 100, Y = y => 10 + y * (H - 20) / 100;
+  const rate = p => p.r.posRating && p.r.posRating[LINE_OF[p.line]];
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Suggested formation" style="max-width:420px;margin:0 auto;display:block">
+  <rect x="2" y="2" width="${W - 4}" height="${H - 4}" rx="10" style="fill:color-mix(in srgb,var(--good) 14%,var(--surface));stroke:var(--axis)"/>
+  <line x1="2" x2="${W - 2}" y1="${H / 2}" y2="${H / 2}" style="stroke:var(--axis)"/><circle cx="${W / 2}" cy="${H / 2}" r="34" style="fill:none;stroke:var(--axis)"/>
+  <rect x="${W / 2 - 70}" y="2" width="140" height="52" style="fill:none;stroke:var(--axis)"/><rect x="${W / 2 - 70}" y="${H - 54}" width="140" height="52" style="fill:none;stroke:var(--axis)"/>`;
+  const gk = { name: "GK", x: 50, y: 92, who: null };
+  slots.concat([gk]).forEach(sl => {
+    const cx = X(sl.x), cy = Y(sl.y), hum = !!sl.who;
+    const col = hum ? S.colorOf(sl.who.p) : "var(--them)";
+    s += `<g><circle cx="${cx}" cy="${cy}" r="${hum ? 15 : 11}" style="fill:${hum ? col : "var(--surface)"};stroke:${hum ? "var(--surface)" : "var(--them)"};stroke-width:2;${hum ? "" : "stroke-dasharray:3 2"}"/>
+      <text x="${cx}" y="${cy + 4}" text-anchor="middle" style="font:700 ${hum ? 10 : 9}px var(--body);fill:${hum ? "#fff" : "var(--muted)"}">${sl.name}</text>
+      <text x="${cx}" y="${cy + (hum ? 28 : 23)}" text-anchor="middle" style="font:${hum ? 600 : 400} 10.5px var(--body);fill:${hum ? "var(--ink)" : "var(--muted)"}">${hum ? esc(sl.who.p.length > 11 ? sl.who.p.slice(0, 10) + "…" : sl.who.p) : "AI"}</text>
+      ${hum && rate(sl.who) ? `<text x="${cx}" y="${cy + 40}" text-anchor="middle" style="font:10px var(--body);fill:var(--muted)">xRating ${f1(rate(sl.who))}</text>` : ""}</g>`;
+  });
+  return s + `</svg>`;
+}
+function lineupBuilder(M) {
+  const T = M.lineupTable;
+  if (!T || !T.roster || !T.actual) return `<div class="block"><h2>Lineup builder</h2>${emptyState("The lineup builder appears after the next model retrain.")}</div>`;
+  const av = availSet(M), opts = actualOptions(T, av), cur = comboFor(T, av);
+  const chips = T.roster.map(r => { const on = av.includes(r.p);
+    return `<button type="button" data-avail="${esc(r.p)}" aria-pressed="${on}"><span class="sw" style="background:${S.colorOf(r.p)}"></span>${esc(r.p)} <span class="muted" style="font-size:.76rem">${r.apps} gm</span></button>`; }).join("");
+  const rec = l => `${l.record[0]}-${l.record[1]}-${l.record[2]}`;
+  let body;
+  if (!cur) body = `<div class="empty"><p>Tick the players who are available.</p></div>`;
+  else {
+    const f = pickFormation(cur.players), slots = placePlayers(cur.players, f, M);
+    const humans = slots.filter(s => s.who);
+    const newbies = cur.players.filter(p => !p.r.regular);
+    body = `<div class="grid g2" style="align-items:start">
+      <div class="area"><div class="block-head" style="margin:0"><div><div class="eyebrow">Suggested formation</div><h2 style="text-transform:none">${f}</h2></div><div class="note">${cur.players.length} human${cur.players.length > 1 ? "s" : ""} + ${Math.max(0, 10 - cur.players.length)} AI + AI keeper</div></div>
+        ${pitchSvg(slots, M)}</div>
+      <div class="area"><div class="eyebrow">Forecast for this exact group</div>
+        <div class="kpis" style="margin:4px 0">
+          <div class="kpi"><span class="l">Model forecast</span><span class="v num">${fp(100 * cur.probs.W)}</span><span class="s">win · ${fp(100 * cur.probs.D)} draw · ${fp(100 * cur.probs.L)} loss · ${cur.gd > 0 ? "+" : ""}${f1(cur.gd)} GD</span></div>
+          ${cur.xGF != null ? `<div class="kpi"><span class="l">Expected score</span><span class="v num">${f1(cur.xGF)}–${f1(cur.xGA)}</span><span class="s">goals for – against per game</span></div>` : ""}
+          <div class="kpi"><span class="l">Played together</span><span class="v num">${cur.real ? rec(cur.real) : "–"}</span><span class="s">${cur.real ? `${cur.real.gamesTogether} game${cur.real.gamesTogether > 1 ? "s" : ""} · goals ${cur.real.gf}:${cur.real.ga}` : "Never as this exact group"}</span></div>
+        </div>
+        ${probBar(cur.probs)}
+        <div style="overflow-x:auto"><table class="cmp" style="margin-top:8px"><thead><tr><th>Player</th><th>Slot</th><th>Plays as</th><th class="n">Their rating there</th><th class="n">Team pts / gm with them</th></tr></thead><tbody>
+        ${humans.map(s => { const w = s.who.r.with || {}, rp = (w.ratingByPos || {})[s.who.pos];
+          return `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(s.who.p)}"></span>${esc(s.who.p)}</span></td><td><b>${s.name}</b></td><td>${esc(posName(s.who.pos))}</td><td class="n">${rp ? `${f1(rp[0])} <span class="muted">· ${rp[1]} gm</span>` : `<span class="muted">new here · model ${f1(s.who.r.posRating?.[s.who.pos])}</span>`}</td><td class="n">${w.games ? `${f2(w.ppg)} <span class="muted">· ${w.games} gm</span>` : `<span class="muted">no games yet</span>`}</td></tr>`; }).join("")}
+        </tbody></table></div>
+        <div class="note">${cur.real ? `This exact group has played ${cur.real.gamesTogether} game${cur.real.gamesTogether > 1 ? "s" : ""} together, so the forecast leans on real results.` : `This group hasn't played together as-is, so the forecast is built from each player's own form at each position and the team's results when they're on the pitch.`}
+          ${newbies.length ? ` ${newbies.map(p => esc(p.p)).join(", ")} ${newbies.length > 1 ? "have" : "has"} fewer than 3 tracked games, so the model treats them as a generic extra player at EA's favourite position.` : ""}</div>
+      </div></div>
+    ${opts.length ? `<div class="block" style="margin-top:14px"><h3>Lineups from these players that have actually played</h3><div class="tablewrap"><table><thead><tr><th>Lineup (positions as played)</th><th class="n">Games</th><th>Record</th><th class="n">Goals</th><th class="n">Pts / gm</th><th class="n">Model win %</th></tr></thead><tbody>
+      ${opts.slice(0, 8).map(l => `<tr><td>${l.players.map(p => `${esc(p.p)} <span class="muted">${POS_SHORT[p.pos] || ""}</span>`).join(", ")}</td><td class="n ${l.gamesTogether < 2 ? "down" : ""}">${l.gamesTogether}</td><td>${rec(l)}</td><td class="n">${l.gf}:${l.ga}</td><td class="n">${f2(l.actualPpg)}</td><td class="n">${fp(100 * l.probs.W)}</td></tr>`).join("")}
+      </tbody></table></div></div>` : ""}`;
+  }
+  return `<div class="block"><div class="block-head"><h2>Lineup builder</h2><span class="note">Tick who's available and every one of them is placed. The model picks each player's position from their own form there and the team's results with them on the pitch; real results for this exact group count when it has played. Formation and slots follow from those positions.</span></div>
+    <div class="picker" role="group" aria-label="Available players" style="margin-bottom:8px">${chips}</div>
+    <div class="filters" style="margin-bottom:12px"><div class="seg"><button data-availall="all" aria-pressed="false">Everyone</button><button data-availall="reg" aria-pressed="false">Regulars</button><button data-availall="none" aria-pressed="false">Clear</button></div></div>
+    ${body}</div>`;
+}
+/* ---------- the one prediction model ---------- */
+const f3 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 1000) / 1000).toFixed(3);
+function modelView(B) { return { ...B, key: B.key || "xgb", name: B.name || "XGBoost" }; }
+function modelSummary(M) {
+  const A = M.match || {}, sel = M.selection, q = M.oppSkillMethod, SL = M.scoreline || {};
+  const row = (l, a, b, fmt) => `<tr><td>${l}</td><td class="n"><b class="${a != null && b != null ? (a < b ? "up" : "down") : ""}">${fmt(a)}</b></td><td class="n muted">${fmt(b)}</td></tr>`;
+  return `<div class="block"><div class="block-head"><h2>Model</h2><span class="tag">${esc(M.name)}</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Measure (lower is better)</th><th class="n">This model</th><th class="n">Simple average</th></tr></thead><tbody>
+      ${row("Goal-difference miss, per game", A.modelMAE, A.baselineMAE, f2)}
+      ${A.logLoss != null ? row("Win / draw / loss log loss", A.logLoss, A.baselineLogLoss, f3) : ""}
+      ${A.brier != null ? row("Win / draw / loss Brier score", A.brier, A.baselineBrier, f3) : ""}
+      ${SL.modelMAE != null ? row("Scoreline miss, per side", SL.modelMAE, SL.baselineMAE, f2) : ""}
+    </tbody></table></div>
+    <p class="note" style="margin-top:6px">This is the only model the dashboard uses. Tested on ${A.games || "the"} forecast games: each session is predicted only from earlier sessions, and the model's settings are also chosen only from earlier sessions, so these numbers aren't flattered. Log loss and Brier score check the win, draw and loss chances themselves.${q ? ` Opponent strength is each opponent's EA skill rating before kick-off, estimated by taking the rating saved after the game and removing the ${f1(q.swingPerResult)} points that game's result moved it.` : ""}</p>
+    ${sel ? `<details style="margin-top:4px"><summary class="note" style="cursor:pointer">Why this model: comparison run on ${esc(sel.date)} (${sel.forecastGames} forecast games)</summary>
+      <div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Model</th><th class="n">GD miss</th><th class="n">Log loss</th><th class="n">Brier</th><th class="n">Scoreline miss</th></tr></thead><tbody>
+      ${sel.results.map(r => `<tr${r.chosen ? ' class="us-row"' : ""}><td>${esc(r.model)}${r.chosen ? " <b>(chosen)</b>" : ""}</td><td class="n">${f2(r.gdMAE)}</td><td class="n">${f3(r.logLoss)}</td><td class="n">${f3(r.brier)}</td><td class="n">${f2(r.scorelineMAE)}</td></tr>`).join("")}
+      </tbody></table></div><p class="note" style="margin-top:6px">${esc(sel.why)} ${esc(sel.method)}</p></details>` : ""}
+  </div>`;
+}
+function modelDetails(M) {
+  if (M.key === "poisson") {
+    const rows = (M.effects || []).filter(e => !["humans", "oppHumans", "playoff", "defenders", "midfielders", "forwards", "otherHumans"].includes(e.f)).sort((x, y) => (y.attack + y.defence) - (x.attack + x.defence));
+    return `<div class="area"><h3>Inside the Poisson model</h3><div class="note">${esc(M.about)}</div>
+      <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Factor</th><th class="n">Attack</th><th class="n">Defence</th></tr></thead><tbody>
+      ${rows.map(e => `<tr><td>${esc(impLabel(e.f))}</td><td class="n ${e.attack > 0.02 ? "up" : e.attack < -0.02 ? "down" : ""}">${e.attack > 0 ? "+" : ""}${fp(100 * (Math.exp(e.attack) - 1))}</td><td class="n ${e.defence > 0.02 ? "up" : e.defence < -0.02 ? "down" : ""}">${e.defence > 0 ? "+" : ""}${fp(100 * (Math.exp(e.defence) - 1))}</td></tr>`).join("")}
+      </tbody></table></div><div class="note">Attack = change in goals we score; defence = change in goals we stop (positive is good). Player rows are "with this player on the pitch"; the opponent row is per 100 points of their skill rating. Scores are ${M.params.dispersionFor ? "more spread out than Poisson, so a Negative Binomial is used" : "close to Poisson, so no extra spread is added"}; shrinkage strength ${M.params.alpha}.</div></div>`;
+  }
+  return "";
+}
+function impLabel(f) {
+  const map = { defenders: "Human defenders", midfielders: "Human midfielders", forwards: "Human forwards", formWinRate5: "Our win rate, last 5", formGD5: "Our goal difference, last 5", recentRating5: "Player rating, last 5", oppSkill: "Opponent skill rating", oppHumans: "Opponent humans", humans: "Our humans", playoff: "Playoff game", sessionGame: "Game number in session", otherHumans: "Occasional players", position: "Position" };
+  if (map[f]) return map[f];
+  if (f.startsWith("with ")) return f.slice(5) + " playing";
+  if (f.startsWith("is ")) return "Player: " + f.slice(3);
+  return f;
+}
+
+/* ---------- review: what the model said vs what happened, per season ---------- */
+const RV_STATS = [["r", "Rating", f1, f2], ["g", "Goals", f0, f2], ["a", "Assists", f0, f2], ["sh", "Shots", f0, f2], ["pm", "Passes made", f0, f2], ["tm", "Tackles won", f0, f2]];
+const rvCall = p => p.W >= p.D && p.W >= p.L ? "W" : p.L >= p.D ? "L" : "D";
+const rvSigned = v => v == null || isNaN(v) ? "–" : (v > 0 ? "+" : v < 0 ? "−" : "") + f1(Math.abs(v));
+function rvTeam(gs) {
+  const P = gs.filter(g => g.pred), c = r => gs.filter(g => g.res === r).length;
+  const o = { n: gs.length, W: c("W"), D: c("D"), L: c("L"), gf: sum(gs, g => g.gf), ga: sum(gs, g => g.ga), nP: P.length };
+  o.pts = 3 * o.W + o.D; o.WP = P.filter(g => g.res === "W").length; o.DP = P.filter(g => g.res === "D").length; o.LP = o.nP - o.WP - o.DP;
+  o.eW = sum(P, g => g.pred.W); o.eD = sum(P, g => g.pred.D); o.eL = sum(P, g => g.pred.L);
+  o.xPts = sum(P, g => 3 * g.pred.W + g.pred.D); o.ptsP = sum(P, g => PTS[g.res] ?? 0);
+  o.xgf = sum(P, g => g.pred.gf); o.xga = sum(P, g => g.pred.ga); o.gfP = sum(P, g => g.gf); o.gaP = sum(P, g => g.ga);
+  o.called = P.filter(g => rvCall(g.pred) === g.res).length; o.bCalled = P.filter(g => rvCall(g.pred.base) === g.res).length;
+  o.acc = pct(o.called, o.nP); o.bAcc = pct(o.bCalled, o.nP);
+  o.gdMiss = avg(P, g => Math.abs(g.gf - g.ga - g.pred.gd)); o.bGdMiss = avg(P, g => Math.abs(g.gf - g.ga - g.pred.base.gd));
+  o.slMiss = avg(P, g => (Math.abs(g.gf - g.pred.gf) + Math.abs(g.ga - g.pred.ga)) / 2);
+  return o;
+}
+function rvPlayers(apps) {
+  let within = 0, closer = 0, n = 0;
+  const per = {};
+  RV_STATS.forEach(([k]) => per[k] = { n: 0, within: 0, closer: 0, miss: 0, bMiss: 0 });
+  apps.forEach(a => RV_STATS.forEach(([k]) => {
+    if (a.pred?.[k] == null) return;
+    const e = Math.abs(a.act[k] - a.pred[k]), b = Math.abs(a.act[k] - a.base[k]), w = e <= (a.tol?.[k] ?? 0) + 1e-9 ? 1 : 0, c = e < b - 1e-9 ? 1 : Math.abs(e - b) <= 1e-9 ? 0.5 : 0;
+    const s = per[k]; s.n++; s.within += w; s.closer += c; s.miss += e; s.bMiss += b; n++; within += w; closer += c;
+  }));
+  Object.values(per).forEach(s => { s.withinPct = pct(s.within, s.n); s.closerPct = pct(s.closer, s.n); s.miss = s.n ? s.miss / s.n : null; s.bMiss = s.n ? s.bMiss / s.n : null; });
+  return { n, apps: apps.length, acc: pct(within, n), closerPct: pct(closer, n), per };
+}
+function renderReview() {
+  const el = $("#p-review"); charts.length = 0;
+  const R = S.review;
+  if (!R || !R.games || !R.games.length) { el.innerHTML = S.reviewLoaded || S.noStore ? emptyState("The season review hasn't been built yet. The collector rebuilds it after every model retrain.") : emptyState(); return; }
+  const seasons = R.seasons || [], sn = seasons.some(s => s.n === S.revSeason) ? S.revSeason : (seasons.at(-1) || {}).n;
+  const SEA = seasons.find(s => s.n === sn) || {};
+  const tf = S.f.type, tLabel = tf === "playoff" ? "playoff games" : tf === "league" ? "league games" : "games";
+  const allG = R.games.filter(g => g.season === sn), G = tf === "all" ? allG : allG.filter(g => g.type === tf);
+  const gById = Object.fromEntries(R.games.map(g => [g.id, g]));
+  const appsOf = gs => { const ids = new Set(gs.map(g => g.id)); return (R.apps || []).filter(a => ids.has(a.m)); };
+  const reviewed = new Set(R.games.map(g => g.id)), pending = S.all.filter(m => !reviewed.has(m.id)).length;
+  const T = rvTeam(G), PL = rvPlayers(appsOf(G));
+  const lg = allG.filter(g => g.type === "league"), po = allG.filter(g => g.type === "playoff");
+  const rec = o => `${o.W}-${o.D}-${o.L}`, erec = o => `${f0(o.eW)}-${f0(o.eD)}-${f0(o.eL)}`;
+  const accCell = (a, n, b) => n ? `<b>${fp(a)}</b> <span class="muted">· ${b} of ${n}</span>` : "–";
+  const bdRow = (label, gs) => { const o = rvTeam(gs), p = rvPlayers(appsOf(gs)); if (!o.n) return `<tr><td>${label}</td><td class="n" colspan="8"><span class="muted">No games</span></td></tr>`;
+    return `<tr><td><b>${label}</b></td><td class="n">${o.n}${o.nP < o.n ? ` <span class="muted">(${o.nP} forecast)</span>` : ""}</td><td class="n"><b>${o.nP ? `${o.WP}-${o.DP}-${o.LP}` : rec(o)}</b></td><td class="n muted">${o.nP ? erec(o) : "–"}</td><td class="n"><b>${o.ptsP}</b> <span class="muted">${o.nP ? "/ " + f1(o.xPts) : ""}</span></td><td class="n"><b>${o.gfP}:${o.gaP}</b> <span class="muted">${o.nP ? f0(o.xgf) + ":" + f0(o.xga) : ""}</span></td><td class="n">${accCell(o.acc, o.nP, o.called)}</td><td class="n muted">${o.nP ? fp(o.bAcc) : "–"}</td><td class="n">${p.n ? `<b>${fp(p.acc)}</b> <span class="muted">· ${p.apps} lines</span>` : "–"}</td></tr>`; };
+
+  // what the system actually published before each block of games
+  const sysG = G.filter(g => g.sys), blocks = [];
+  sysG.forEach(g => { const b = blocks.at(-1); if (b && b.run === g.sys.run) b.games.push(g); else blocks.push({ run: g.sys.run, rec: g.sys.rec, probs: g.sys.probs, games: [g] }); });
+  const pubX = sum(sysG, g => 3 * (g.sys.probs?.W || 0) + (g.sys.probs?.D || 0)), pubW = sum(sysG, g => g.sys.probs?.W || 0);
+  const sysP = sysG.filter(g => g.pred), btX = sum(sysP, g => 3 * g.pred.W + g.pred.D), sysPts = sum(sysG, g => PTS[g.res] ?? 0);
+  const followed = sysG.filter(g => g.sys.followed), fullIn = sysG.filter(g => !g.sys.missing.length);
+  const missCount = {}, extraCount = {};
+  sysG.forEach(g => { g.sys.missing.forEach(n => missCount[n] = (missCount[n] || 0) + 1); g.sys.extra.forEach(n => extraCount[n] = (extraCount[n] || 0) + 1); });
+  const topList = c => Object.entries(c).sort((a, b) => b[1] - a[1]).map(([n, k]) => `${esc(n)} <span class="muted">×${k}</span>`).join(", ") || "nobody";
+  const sysT = rvTeam(sysG);
+
+  // calibration: when the model gave a win chance in each band, how often did it happen
+  const P = G.filter(g => g.pred);
+  const bands = [["Under 30%", 0, 0.3], ["30–50%", 0.3, 0.5], ["50% or more", 0.5, 1.01]].map(([l, lo, hi]) => { const b = P.filter(g => g.pred.W >= lo && g.pred.W < hi); return { l, n: b.length, said: avg(b, g => 100 * g.pred.W), got: pct(b.filter(g => g.res === "W").length, b.length) }; });
+
+  // per player
+  const names = [...new Set(appsOf(G).map(a => a.p))];
+  const prow = names.map(n => { const A = appsOf(G).filter(a => a.p === n); return { n, A, s: rvPlayers(A) }; }).sort((a, b) => b.A.length - a.A.length);
+  const pc = (A, k, fmt) => { const act = k === "r" ? avg(A, a => a.act[k]) : sum(A, a => a.act[k]), pr = k === "r" ? avg(A, a => a.pred[k]) : sum(A, a => a.pred[k]);
+    const d = act - pr, big = k === "r" ? 0.3 : Math.max(1, 0.15 * Math.abs(pr)), cls = Math.abs(d) < big ? "" : d > 0 ? "up" : "down";
+    return `<td class="n"><b class="${cls}">${fmt(act)}</b> <span class="muted">${k === "r" ? f1(pr) : f1(pr)}</span></td>`; };
+
+  el.innerHTML = `
+  <div class="block"><div class="block-head"><h2>Model review</h2>
+      ${seasons.length > 1 ? `<div class="seg" role="group" aria-label="Season" id="rvSeason">${seasons.map(s => `<button data-v="${s.n}" aria-pressed="${s.n === sn}">Season ${s.n}</button>`).join("")}</div>` : `<span class="tag">Season ${sn}</span>`}</div>
+    <p class="note">Season ${sn}: ${esc(dayFmt(Date.parse(SEA.start) / 1000))} to ${esc(dayFmt(Date.parse(SEA.end) / 1000))}, ${SEA.games} games${SEA.playoffStart ? `, playoffs from ${esc(dayFmt(Date.parse(SEA.playoffStart) / 1000))}` : ""}. A season ends when its playoff run is over. Every forecast here was made using only games played before that session, for the players who actually played, so it is what the system would have said before kick-off. ${tf !== "all" ? `Showing ${tLabel} only (match type filter above).` : ""} The date range filter doesn't apply here.${pending ? ` <span style="color:var(--crit)">${pending} newer game${pending > 1 ? "s" : ""} not reviewed yet; the collector adds ${pending > 1 ? "them" : "it"} after its next retrain.</span>` : ""}</p></div>
+
+  <div class="kpis">
+    <div class="kpi"><span class="l">Team model accuracy</span><span class="v num">${fp(T.acc)}</span><span class="s">${T.called} of ${T.nP} results called right · simple average ${fp(T.bAcc)}</span></div>
+    <div class="kpi"><span class="l">Player model accuracy</span><span class="v num">${fp(PL.acc)}</span><span class="s">${PL.n} player-stat forecasts within the model's range · closer than own average ${fp(PL.closerPct)}</span></div>
+    <div class="kpi"><span class="l">Points</span><span class="v num">${T.ptsP} <span class="muted" style="font-size:1.2rem">/ ${f1(T.xPts)}</span></span><span class="s">actual / expected over ${T.nP} forecast ${tLabel}</span></div>
+    <div class="kpi"><span class="l">Goals</span><span class="v num">${T.gfP}:${T.gaP}</span><span class="s">expected ${f0(T.xgf)}:${f0(T.xga)}</span></div>
+  </div>
+
+  <div class="block"><div class="block-head"><h2>League and playoffs</h2><span class="note">Bold = what happened, grey = what the model expected. Team accuracy = results called right (the model's most likely result). Player accuracy = player forecasts that landed inside the model's own range. Record, points and goals cover the forecast games.</span></div>
+    <div class="tablewrap"><table><thead><tr><th></th><th class="n">Games</th><th class="n">Record</th><th class="n">Expected</th><th class="n">Points</th><th class="n">Goals</th><th class="n">Team accuracy</th><th class="n">Simple avg</th><th class="n">Player accuracy</th></tr></thead><tbody>
+    ${bdRow("League", lg)}${bdRow("Playoffs", po)}${bdRow("Season " + sn, allG)}
+    </tbody></table></div>
+    ${T.nP < T.n ? `<p class="note" style="margin-top:8px">${T.n - T.nP} of the first ${tLabel} had no forecast: the model needs 10 earlier games to learn from.</p>` : ""}</div>
+
+  <div class="block"><div class="block-head"><h2>Expected vs actual points</h2><span class="note">Running total over the forecast ${tLabel}, oldest left.</span></div><div class="chart" id="rvCum"></div></div>
+
+  <div class="block"><div class="block-head"><h2>What the system told you vs what you played</h2><span class="note">The lineup the Predictions tab recommended at the time, and who actually played. Published forecasts start ${R.firstRun ? esc(dateFmt(Date.parse(R.firstRun) / 1000)) : "after the first retrain"}.</span></div>
+    ${sysG.length ? `<div class="kpis">
+      <div class="kpi"><span class="l">Played the pick</span><span class="v num">${followed.length} <span class="muted" style="font-size:1.2rem">/ ${sysG.length}</span></span><span class="s">games with exactly the recommended players · ${fullIn.length} with all of them plus others</span></div>
+      <div class="kpi"><span class="l">Lineup match</span><span class="v num">${fp(100 * avg(sysG, g => g.sys.overlap))}</span><span class="s">of recommended players played, on average</span></div>
+      <div class="kpi"><span class="l">System's pick</span><span class="v num">${f1(pubX)}</span><span class="s">expected points · ${f1(pubW)} wins in ${sysG.length}</span></div>
+      <div class="kpi"><span class="l">Lineups you played</span><span class="v num">${f1(btX)}</span><span class="s">expected points${sysP.length < sysG.length ? ` (${sysP.length} games)` : ""} · you got <b>${sysPts}</b> (${rec(sysT)})</span></div>
+    </div>
+    <p class="note" style="margin-top:8px">Most often left out of the pick: ${topList(missCount)}. Played without being picked: ${topList(extraCount)}. The pick's forecast is the system's own published number for the recommended group, so it only says what the model expected if you had played that group; it can't prove you would have got it.</p>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Forecast published</th><th>Recommended</th><th class="n">Pick: W / D / L</th><th class="n">Games</th><th>Who played instead <span style="text-transform:none;letter-spacing:0">(×n = some games only)</span></th><th class="n">Pick expected</th><th class="n">Your lineups expected</th><th class="n">Actual</th></tr></thead><tbody>
+    ${blocks.map(b => { const o = rvTeam(b.games), bp = b.games.filter(g => g.pred), ms = {}, ex = {}; b.games.forEach(g => { g.sys.missing.forEach(n => ms[n] = (ms[n] || 0) + 1); g.sys.extra.forEach(n => ex[n] = (ex[n] || 0) + 1); });
+      const diff = [...Object.keys(ms).map(n => `<span class="down">−${esc(n)}</span>${ms[n] < b.games.length ? `<span class="muted"> ×${ms[n]}</span>` : ""}`), ...Object.keys(ex).map(n => `<span class="up">+${esc(n)}</span>${ex[n] < b.games.length ? `<span class="muted"> ×${ex[n]}</span>` : ""}`)].join(" ") || "Exactly the pick";
+      const pp = b.probs || { W: 0, D: 0, L: 0 };
+      return `<tr><td>${esc(dateFmt(Date.parse(b.run) / 1000))}</td><td style="white-space:normal;min-width:160px">${b.rec.map(esc).join(", ")}</td><td class="n">${fp(100 * pp.W)} / ${fp(100 * pp.D)} / ${fp(100 * pp.L)}</td><td class="n">${b.games.length}</td><td style="white-space:normal;min-width:170px">${diff}</td><td class="n">${f1(b.games.length * (3 * pp.W + pp.D))} pts</td><td class="n">${bp.length ? f1(sum(bp, g => 3 * g.pred.W + g.pred.D)) + " pts" : "–"}</td><td class="n"><b>${o.pts} pts</b> <span class="muted">${rec(o)}</span></td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="empty"><p>No forecasts were published before these ${tLabel}.</p></div>`}</div>
+
+  <div class="grid g2">
+    <div class="area"><h3>Team model accuracy</h3>
+      <div style="overflow-x:auto"><table class="cmp"><thead><tr><th></th><th class="n">Model</th><th class="n">Simple average</th></tr></thead><tbody>
+        <tr><td>Results called right</td><td class="n"><b>${fp(T.acc)}</b></td><td class="n muted">${fp(T.bAcc)}</td></tr>
+        <tr><td>Average miss on goal difference</td><td class="n"><b>${f2(T.gdMiss)}</b></td><td class="n muted">${f2(T.bGdMiss)}</td></tr>
+        <tr><td>Average miss on goals, per side</td><td class="n"><b>${f2(T.slMiss)}</b></td><td class="n muted">–</td></tr>
+        <tr><td>Expected points vs actual</td><td class="n"><b>${f1(T.xPts)}</b> → ${T.ptsP}</td><td class="n muted"></td></tr>
+      </tbody></table></div>
+      <h3 style="margin-top:6px">When the model gave you a win chance of…</h3>
+      <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Win chance</th><th class="n">Games</th><th class="n">It said</th><th class="n">You won</th></tr></thead><tbody>
+        ${bands.map(b => `<tr><td>${b.l}</td><td class="n">${b.n}</td><td class="n muted">${b.n ? fp(b.said) : "–"}</td><td class="n"><b>${b.n ? fp(b.got) : "–"}</b></td></tr>`).join("")}
+      </tbody></table></div>
+      <div class="note">"Simple average" guesses the club's average goal difference so far every game. A draw is rarely the single most likely result, so drawn games almost always count as misses.</div></div>
+    <div class="area"><h3>Player model accuracy</h3>
+      <div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Stat</th><th class="n">Within range</th><th class="n">Closer than own avg</th><th class="n">Model miss</th><th class="n">Own-avg miss</th></tr></thead><tbody>
+        ${RV_STATS.map(([k, l, , fm]) => { const s = PL.per[k]; return `<tr><td>${l}</td><td class="n"><b>${fp(s.withinPct)}</b></td><td class="n ${s.closerPct >= 50 ? "up" : "down"}">${fp(s.closerPct)}</td><td class="n">${fm(s.miss)}</td><td class="n muted">${fm(s.bMiss)}</td></tr>`; }).join("")}
+        <tr><td><b>All stats</b></td><td class="n"><b>${fp(PL.acc)}</b></td><td class="n ${PL.closerPct >= 50 ? "up" : "down"}">${fp(PL.closerPct)}</td><td></td><td></td></tr>
+      </tbody></table></div>
+      <div class="note">${PL.apps} player appearances forecast. "Within range" means the actual number landed inside the model's typical miss at the time (the range shown on the Predictions tab). "Closer than own avg" is how often the model beat simply guessing the player's own average so far; 50% means no better than that guess.</div></div>
+  </div>
+
+  <div class="block"><div class="block-head"><h2>Players: forecast vs actual</h2><span class="note">Bold = actual, grey = model. Rating is the average per game; the rest are totals over the forecast games. Green = well above the forecast, red = well below.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Player</th><th class="n">Games</th>${RV_STATS.map(([, l]) => `<th class="n">${l}</th>`).join("")}<th class="n">Accuracy</th></tr></thead><tbody>
+    ${prow.map(r => `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(r.n)}"></span>${esc(r.n)}</span></td><td class="n">${r.A.length}</td>${RV_STATS.map(([k, , fmt]) => pc(r.A, k, k === "r" ? f1 : fmt)).join("")}<td class="n"><b>${fp(r.s.acc)}</b></td></tr>`).join("")}
+    </tbody></table></div></div>
+
+  <div class="block"><div class="block-head"><h2>Game by game</h2><span class="note">Newest first. Forecast for the players who actually played.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Kick-off</th><th>Type</th><th>Opponent</th><th class="n">Humans</th><th>Forecast W / D / L</th><th class="n">Expected</th><th class="n">Actual</th><th>Called</th><th class="n">GD miss</th><th>Pick played?</th></tr></thead><tbody>
+    ${G.slice().reverse().map(g => { const p = g.pred, hit = p && rvCall(p) === g.res;
+      return `<tr><td>${esc(dateFmt(g.ts))}</td><td>${g.type === "playoff" ? "Playoff" : "League"}</td><td>${esc(g.opp)}</td><td class="n">${g.humans}</td><td>${p ? `<div style="display:flex;gap:8px;align-items:center">${probBar(p)}<span class="num muted" style="font-size:.8rem">${fp(100 * p.W)}</span></div>` : `<span class="muted">not forecast</span>`}</td><td class="n muted">${p ? f1(p.gf) + "–" + f1(p.ga) : "–"}</td><td class="n"><span class="chip sm ${g.res}">${g.res}</span> <b class="num">${g.gf}-${g.ga}</b></td><td>${p ? (hit ? `<span class="up">✓ ${rvCall(p)}</span>` : `<span class="down">✗ said ${rvCall(p)}</span>`) : ""}</td><td class="n">${p ? f1(Math.abs(g.gf - g.ga - p.gd)) : "–"}</td><td>${g.sys ? (g.sys.followed ? `<span class="up">Yes</span>` : `<span class="muted">${fp(100 * g.sys.overlap)} of pick</span>`) : `<span class="muted">–</span>`}</td></tr>`; }).join("")}
+    </tbody></table></div></div>
+
+  ${seasons.length ? `<div class="block"><div class="block-head"><h2>Every season</h2><span class="note">League and playoffs for each season, all match types.</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Season</th><th></th><th class="n">Games</th><th class="n">Record</th><th class="n">Expected</th><th class="n">Points</th><th class="n">Goals</th><th class="n">Team accuracy</th><th class="n">Simple avg</th><th class="n">Player accuracy</th></tr></thead><tbody>
+    ${seasons.map(s => { const sg = R.games.filter(g => g.season === s.n); return ["League", "Playoffs"].map((l, i) => bdRow(l, sg.filter(g => g.type === (i ? "playoff" : "league"))).replace("<tr>", `<tr${s.n === sn ? ' class="us-row"' : ""}><td>${i ? "" : `<b>Season ${s.n}</b><div class="muted" style="font-size:.78rem">${esc(dayFmt(Date.parse(s.start) / 1000))} – ${esc(dayFmt(Date.parse(s.end) / 1000))}</div>`}</td>`)).join(""); }).join("")}
+    </tbody></table></div></div>` : ""}
+  <p class="note">${esc(R.method || "")} Review rebuilt ${esc(dateFmt(Date.parse(R.computedAt) / 1000))}.</p>`;
+
+  el.querySelectorAll("#rvSeason button").forEach(b => b.addEventListener("click", () => { S.revSeason = +b.dataset.v; render(); }));
+  if (P.length) {
+    let a = 0, x = 0; const ca = [], cx = [];
+    P.forEach(g => { a += PTS[g.res] ?? 0; x += 3 * g.pred.W + g.pred.D; ca.push(a); cx.push(+x.toFixed(2)); });
+    lineChart($("#rvCum"), { h: 200, title: "Expected and actual points", labels: P.map(g => dayFmt(g.ts)), min: 0, fmt: f1,
+      tipTitle: i => `${dateFmt(P[i].ts)} · ${P[i].type === "playoff" ? "Playoff" : "League"} vs ${P[i].opp} ${P[i].gf}-${P[i].ga}`,
+      series: [{ name: "Actual points", color: "var(--us)", values: ca }, { name: "Expected points", color: "var(--them)", dash: true, values: cx }] });
+  } else $("#rvCum").innerHTML = `<div class="note" style="padding:20px">No forecast games in this selection.</div>`;
+}
+
+function renderRoles(ms) {
+  const el = $("#p-roles"); charts.length = 0;
+  const apps = ms.flatMap(m => m._players);
+  const archs = [...new Set(S.all.flatMap(m => m._players.map(p => p.arch)))].sort((a, b) => a - b);
+  if (!archs.length) { el.innerHTML = emptyState(); return; }
+  el.innerHTML = `<div class="block"><div class="block-head"><h2>Roles</h2></div>
+    <p class="note">EA records each player's role as a number. Name each one once (for example the archetype you picked in-game) and every chart and report uses your name. ${S.canWrite === false ? "You can view these names but not change them." : ""}</p>
+    <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Role ID</th><th>Your name for it</th><th class="n">Games</th><th>Played by</th><th class="n">Avg rating</th><th class="n">G+A / gm</th><th class="n">Pass %</th><th class="n">Tackle %</th><th class="n">Pts / gm</th></tr></thead><tbody>
+    ${archs.map(r => { const a = apps.filter(p => p.arch === r), st = aggPlayer(a, ms), who = {}; a.forEach(p => who[p.p] = (who[p.p] || 0) + 1);
+      return `<tr><td class="num">${r}</td><td><input class="role-name" id="role-${r}" data-arch="${r}" value="${esc(S.roles[String(r)]?.name || "")}" placeholder="Role ${r}" ${S.canWrite === false ? "disabled" : ""} aria-label="Name for role ${r}"><span class="saved" id="saved-${r}"></span></td><td class="n">${a.length}</td><td>${Object.entries(who).map(([n, c]) => esc(n) + " ×" + c).join(", ") || "–"}</td><td class="n">${f1(st.rating)}</td><td class="n">${f2(st.gi)}</td><td class="n">${fp(st.passPct)}</td><td class="n">${fp(st.tklPct)}</td><td class="n">${f2(st.ppg)}</td></tr>`; }).join("")}
+    </tbody></table></div></div>`;
+  el.querySelectorAll(".role-name").forEach(inp => {
+    const save = async () => {
+      const arch = inp.dataset.arch, name = inp.value.trim().slice(0, 40);
+      if ((S.roles[arch]?.name || "") === name || !S.db) return;
+      try { await S.db.doc("roles/" + arch).set({ name, arch: +arch }); $("#saved-" + arch).textContent = " Saved"; }
+      catch (e) { S.canWrite = false; $("#saved-" + arch).textContent = " You don't have permission to rename roles"; }
+    };
+    inp.addEventListener("change", save);
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") inp.blur(); });
+  });
+}
+
+function renderSeason() {
+  const el = $("#p-season"); charts.length = 0;
+  const snap = S.snaps[0];
+  if (!snap) { el.innerHTML = emptyState("The collector saves a daily snapshot of EA's club totals and member stats. It will appear here after the first run."); return; }
+  const snaps = S.snaps.slice().reverse();
+  const mem = (snap.members || []).slice().sort((a, b) => b.gp - a.gp);
+  el.innerHTML = `
+  <div class="kpis">
+    <div class="kpi"><span class="l">EA club record</span><span class="v num">${snap.wins}-${snap.ties}-${snap.losses}</span><span class="s">${snap.gamesPlayed} games, league and playoff</span></div>
+    <div class="kpi"><span class="l">Goals</span><span class="v num">${snap.goals}:${snap.goalsAgainst}</span><span class="s">${f2(snap.goals / snap.gamesPlayed)} for, ${f2(snap.goalsAgainst / snap.gamesPlayed)} against per game</span></div>
+    <div class="kpi"><span class="l">Division</span><span class="v num">${snap.currentDivision}</span><span class="s">Best ${snap.bestDivision} · ${snap.promotions} up, ${snap.relegations} down</span></div>
+    <div class="kpi"><span class="l">Skill rating</span><span class="v num">${snap.skillRating}</span><span class="s">Snapshot ${esc(snap.date)}</span></div>
+  </div>
+  ${(() => { const gp = gaps(); const n = sum(gp, g => g.n); return n ? `<p class="note">${n} game${n > 1 ? "s" : ""} since collection began ${n > 1 ? "were" : "was"} never captured, so EA's record here is ahead of the match charts. Details are on the Overview tab.</p>` : ""; })()}
+  <div class="block"><div class="block-head"><h3>Skill rating over time</h3><span class="note">One point per daily snapshot</span></div><div class="chart" id="cSR"></div></div>
+  <div class="block"><div class="block-head"><h2>Member totals from EA</h2><span class="note">EA's own running totals, including games played before collection started.</span></div>
+  <div class="tablewrap"><table><thead><tr><th>Player</th><th class="n">Games</th><th class="n">Win %</th><th class="n">Goals</th><th class="n">Assists</th><th class="n">G+A / gm</th><th class="n">Shot %</th><th class="n">Pass %</th><th class="n">Tackle %</th><th class="n">Avg rating</th><th class="n">MOTM</th><th class="n">Reds</th><th class="n">Pro OVR</th><th>Favourite</th></tr></thead><tbody>
+  ${mem.map(m => `<tr><td><span class="pname"><span class="sw" style="background:${S.colorOf(m.p)}"></span>${esc(m.p)}</span></td><td class="n">${m.gp}</td><td class="n">${m.wr}%</td><td class="n">${m.g}</td><td class="n">${m.a}</td><td class="n">${f2((m.g + m.a) / m.gp)}</td><td class="n">${m.shotPct}%</td><td class="n">${m.passPct}%</td><td class="n">${m.tklPct}%</td><td class="n">${f1(m.r)}</td><td class="n">${m.mom}</td><td class="n">${m.red}</td><td class="n">${m.ovr}</td><td>${esc(m.fav)}</td></tr>`).join("")}
+  </tbody></table></div><p class="note" style="margin-top:8px">EA's "shot %" is goals per shot, as shown in-game.</p></div>`;
+  lineChart($("#cSR"), { title: "Skill rating", labels: snaps.map(s => s.date.slice(5)), fmt: f0, series: [{ name: "Skill rating", color: "var(--us)", values: snaps.map(s => s.skillRating) }] });
+}
+
+function renderHeader() {
+  const snap = S.snaps[0], n = S.all.length;
+  $("#hdrSub").textContent = snap ? `Division ${snap.currentDivision} · Skill rating ${snap.skillRating} · ${n} match${n === 1 ? "" : "es"} collected` : `${n} match${n === 1 ? "" : "es"} collected`;
+  const meta = S.meta;
+  const first = S.all[0], last = S.all.at(-1);
+  const due = lastCheckDue(), missed = meta && meta.lastRun && Date.parse(meta.lastRun) < due - 5 * 6e4;
+  $("#statusLine").innerHTML = S.noStore ? "This view can't reach the match store"
+    : meta && meta.lastRun ? `Checked EA <b>${esc(new Date(meta.lastRun).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }))}</b> · next check ${esc(whenFmt(nextCheck()))}${meta.status && meta.status !== "ok" ? ` · <span style="color:var(--crit)">${esc(meta.status)}</span>` : ""}${missed ? ` · <span style="color:var(--crit)">the ${esc(whenFmt(new Date(due)))} check didn't run</span>` : ""}<br>${last ? `Newest game saved: ${esc(dateFmt(last.ts))}` : ""}${S.db ? ` · <button type="button" class="linkbtn" id="refreshNow">${S.refreshing ? "Refreshing…" : "Refresh now"}</button>` : ""}`
+    : (S.loaded ? "Waiting for the first collector run" : "Loading matches…");
+  if (S.loadError) $("#statusLine").insertAdjacentHTML("beforeend", `<br><span style="color:var(--crit)">${esc(S.loadError)}</span>`);
+  if (S.fromCache) $("#statusLine").insertAdjacentHTML("beforeend", `<br><span>${S.noStore ? "Showing the copy saved on this device" : "Showing the copy saved on this device · updating…"}</span>`);
+}
+
+function render() {
+  try {
+    S.all = enrich(S.matches); S.byId = Object.fromEntries(S.all.map(m => [m.id, m]));
+    renderHeader();
+    const ms = filtered();
+    ({ overview: renderOverview, players: renderPlayers, compare: renderCompare, matches: renderMatches, opponents: renderOpponents, predict: renderPredict, review: renderReview, roles: renderRoles, season: renderSeason })[S.tab](ms);
+  } catch (e) {
+    console.error("[Al Haramis] render", e);
+    const el = $("#p-" + S.tab);
+    if (el) el.innerHTML = `<div class="empty"><h3>This tab couldn't be drawn</h3><p>Something in the saved data tripped up the page: ${esc(e && e.message || e)}. Send this message to Claude to get it fixed.</p></div>`;
+  }
+}
+
+/* ---------- controls ---------- */
+function setTab(t) {
+  S.tab = t;
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  document.querySelectorAll("section.panel").forEach(p => p.hidden = p.id !== "p-" + t);
+  try { localStorage.setItem("ah.tab", t); } catch (e) {}
+  render();
+}
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+function seg(id, key) {
+  $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    S.f[key] = b.dataset.v; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    try { localStorage.setItem("ah.f", JSON.stringify(S.f)); } catch (e) {}
+    render();
+  }));
+}
+seg("#fType", "type"); seg("#fRange", "range");
+try {
+  const f = JSON.parse(localStorage.getItem("ah.f") || "null"); if (f) { S.f = { ...S.f, ...f };
+    ["#fType", "#fRange"].forEach((id, i) => $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === S.f[i ? "range" : "type"])))); }
+} catch (e) {}
+let startTab = "overview";
+const h = (location.hash || "").slice(1); if (["overview", "players", "compare", "matches", "opponents", "predict", "review", "roles", "season"].includes(h)) startTab = h;
+else { try { const t = localStorage.getItem("ah.tab"); if (t) startTab = t; } catch (e) {} }
+
+/* ---------- data connection ---------- */
+// one redraw per frame, however many data updates land together
+let queued = false;
+function scheduleRender() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; if (S.tab === "roles" && document.activeElement?.classList.contains("role-name")) renderHeader(); else render(); }); }
+
+// last-seen data kept on this device so a repeat visit paints at once; the store stays the source of truth
+const CACHE = "ah.cache.v1";
+function loadCache() {
+  try { const c = JSON.parse(localStorage.getItem(CACHE) || "null");
+    if (c && Array.isArray(c.matches) && c.matches.length) { S.matches = c.matches; S.snaps = c.snaps || []; S.roles = c.roles || {}; S.meta = c.meta || null; S.loaded = true; S.fromCache = true; } } catch (e) {}
+}
+let saveT;
+let cacheDirty = false;
+function writeCache() { if (!cacheDirty) return; cacheDirty = false; try { localStorage.setItem(CACHE, JSON.stringify({ matches: S.matches, snaps: S.snaps.slice(0, 60), roles: S.roles, meta: S.meta })); } catch (e) {} }
+function saveCache() { cacheDirty = true; clearTimeout(saveT); saveT = setTimeout(writeCache, 300); }
+addEventListener("pagehide", writeCache);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") writeCache(); });
+
+function loadFonts() {
+  try { const l = document.createElement("link"); l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap";
+    l.onload = () => setTimeout(redrawAll, 50); document.head.appendChild(l); } catch (e) {}
+}
+
+async function connect() {
+  if (window.__SEED) { Object.assign(S, window.__SEED); S.loaded = true; setTab(startTab); return; }
+  const use = n => window.claude && window.claude.use ? window.claude.use(n).catch(() => null) : Promise.resolve(null);
+  const userP = use("user");   // asked in parallel; never holds up the data
+  const db = await use("db");
+  if (!db) { S.loaded = true; S.noStore = true; scheduleRender(); return; }
+  S.db = db;
+  // errors stay on screen until data arrives; nothing overwrites them
+  const fail = what => e => { S.loadError = `Couldn't load ${what} (${(e && e.code) || "error"}). Reload the page to try again.`; console.error("[Al Haramis] " + what, e); scheduleRender(); };
+  let gotMatches = false, sig = "", snapSig = "", known = null;
+  const setMatches = (docs, definitive) => {
+    const arr = docs.map(d => d.data()).filter(m => m && typeof m.ts === "number").sort((a, b) => a.ts - b.ts);
+    if (!definitive && !arr.length) return;          // an empty provisional view is not an answer
+    if (!definitive && gotMatches) return;           // never replace real data with a provisional view
+    const nsig = arr.map(m => m.id + ":" + (m.fetchedAt || "") + ":" + (m.evSource || "") + ":" + (m.players || []).filter(p => p.ev).length).join(",");
+    if (gotMatches && nsig === sig) return;          // nothing changed: leave the page alone
+    sig = nsig; S.matches = arr; S.loaded = true; S.loadError = null;
+    if (definitive) {
+      if (!known) {                                  // first real answer: flag games new since this viewer's last visit
+        let seen = 0; try { seen = +localStorage.getItem("ah.seenTs") || 0; } catch (e) {}
+        const fresh = seen ? arr.filter(m => m.ts > seen) : [];
+        fresh.forEach(m => S.newIds.add(m.id));
+        if (fresh.length) toast(`${fresh.length} new match${fresh.length > 1 ? "es" : ""} since your last visit`);
+        known = new Set(arr.map(m => m.id));
+      } else {                                       // a later pull added games while the page was open
+        const added = arr.filter(m => !known.has(m.id));
+        added.forEach(m => { known.add(m.id); S.newIds.add(m.id); });
+        if (added.length) toast(`${added.length} new match${added.length > 1 ? "es" : ""} added · dashboard updated`);
+      }
+      if (arr.length) { try { localStorage.setItem("ah.seenTs", String(arr[arr.length - 1].ts)); } catch (e) {} }
+      gotMatches = true; S.fromCache = false; saveCache();
+    }
+    scheduleRender();
+  };
+  const setSnaps = docs => {
+    const arr = docs.map(d => d.data()).filter(s => s && s.date).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 120);
+    const nsig = arr.map(s => s.date + ":" + (s.takenAt || "") + ":" + s.gamesPlayed).join(",");
+    if (nsig === snapSig) return; snapSig = nsig;
+    S.snaps = arr; if (gotMatches) saveCache(); scheduleRender();
+  };
+  const matches = db.collection("matches"), snaps = db.collection("snapshots");
+  // a direct read and a live subscription race; the first real answer wins
+  matches.get().then(s => setMatches(s.docs, true), e => { if (!gotMatches) fail("matches")(e); });
+  matches.onSnapshot(s => setMatches(s.docs, !(s.metadata && s.metadata.fromCache)), e => { if (!gotMatches) fail("matches")(e); });
+  snaps.get().then(s => setSnaps(s.docs), () => {});
+  snaps.onSnapshot(s => setSnaps(s.docs), () => {});
+  db.collection("roles").onSnapshot(s => { const r = {}; s.docs.forEach(d => r[d.id] = d.data()); S.roles = r; scheduleRender(); }, () => {});
+  db.collection("benchmarks").onSnapshot(s => { const b = {}; s.docs.forEach(d => b[d.id] = d.data()); S.bench = b; scheduleRender(); }, () => {});
+  db.doc("meta/codes").onSnapshot(d => { S.codes = d.exists ? (d.data() || {}) : {}; scheduleRender(); }, () => {});
+  db.doc("meta/state").onSnapshot(d => { S.meta = d.exists ? d.data() : null; if (gotMatches) saveCache(); renderHeader(); }, () => {});
+  const tabRender = tabs => () => { if (tabs.includes(S.tab)) scheduleRender(); };
+  db.collection("opponents").onSnapshot(s => { const o = {}; s.docs.forEach(d => o[d.id] = d.data()); S.opps = o; tabRender(["opponents", "predict"])(); }, () => {});
+  db.collection("oppmatch").onSnapshot(s => { const o = {}; s.docs.forEach(d => o[d.id] = d.data()); S.oppm = o; tabRender(["opponents", "matches"])(); }, () => {});
+  db.doc("model/latest").onSnapshot(d => { S.model = d.exists ? d.data() : null; tabRender(["predict"])(); }, () => {});
+  db.collection("modelruns").onSnapshot(s => { S.modelRuns = s.docs.map(d => d.data()).filter(r => r && r.trainedAt).sort((a, b) => a.trainedAt < b.trainedAt ? -1 : 1); tabRender(["predict"])(); }, () => {});
+  db.doc("review/latest").onSnapshot(d => { S.review = d.exists ? d.data() : null; S.reviewLoaded = true; tabRender(["review"])(); }, () => { S.reviewLoaded = true; tabRender(["review"])(); });
+  setTimeout(() => { if (!S.loaded && !S.loadError) { S.slow = true; scheduleRender(); } }, 12000);
+  // safety net if the live feed goes quiet: re-read every 2 minutes while visible, and whenever the viewer comes back
+  const metaRef = db.doc("meta/state");
+  S.refresh = async () => {
+    S.refreshing = true; renderHeader();
+    await Promise.allSettled([
+      matches.get().then(s => setMatches(s.docs, true)),
+      snaps.get().then(s => setSnaps(s.docs)),
+      metaRef.get().then(d => { S.meta = d.exists ? d.data() : null; }),
+    ]);
+    S.refreshing = false; renderHeader();
+  };
+  setInterval(() => { if (document.visibilityState === "visible") S.refresh(); }, 120000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && gotMatches) S.refresh(); });
+  try { const user = await userP; if (user) { const c = await user.can("data.write"); S.canWrite = c === null ? null : !!c; if (S.tab === "roles") scheduleRender(); } } catch (e) {}
+}
+// collector schedule in Pakistan time (UTC+5, no daylight saving): every night 10 PM–3 AM, Mon–Thu catch-up at 9 AM and 12 PM, Fri–Sun hourly 10 AM–9 PM; always at :19
+const PK = 5 * 36e5, NIGHT = [22, 23, 0, 1, 2, 3], CATCHUP = [9, 12], WEEKDAYS = [1, 2, 3, 4], WEEKEND = [5, 6, 0];
+function scheduled(t) { const d = new Date(t + PK), h = d.getUTCHours(), wd = d.getUTCDay(); return NIGHT.includes(h) || (WEEKDAYS.includes(wd) && CATCHUP.includes(h)) || (WEEKEND.includes(wd) && h >= 10 && h <= 21); }
+function nextCheck() { const now = Date.now(); let t = Math.floor(now / 36e5) * 36e5 + 19 * 6e4; if (t <= now) t += 36e5; for (let i = 0; i < 24 * 8 && !scheduled(t); i++) t += 36e5; return new Date(t); }
+// the most recent check that should have finished by now (runs take a few minutes)
+function lastCheckDue() { const now = Date.now() - 10 * 6e4; let t = Math.floor(now / 36e5) * 36e5 + 19 * 6e4; if (t > now) t -= 36e5; for (let i = 0; i < 24 * 8 && !scheduled(t); i++) t -= 36e5; return t; }
+function whenFmt(d) { const sameDay = d.toDateString() === new Date().toDateString(); return d.toLocaleString([], sameDay ? { hour: "numeric", minute: "2-digit" } : { weekday: "short", hour: "numeric", minute: "2-digit" }); }
+let toastT;
+function toast(msg) { const t = $("#toast"); if (!t) return; t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 8000); }
+document.addEventListener("click", e => { if (e.target.id === "refreshNow" && S.refresh && !S.refreshing) S.refresh(); });
+loadCache();
+setTab(startTab);
+loadFonts();
+connect();
+})();
+</script>
+
+</body>
+</html>

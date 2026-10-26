@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-23T22:20:22Z",
+ "humans": 2,
+ "matchId": "131944819390039",
+ "opp": "Al Qaysariyah",
+ "oppId": 1344122,
+ "players": [
+  {
+   "a": 0,
+   "arch": 12,
+   "g": 2,
+   "gc": 5,
+   "mom": 0,
+   "p": "A66-6RB",
+   "pa": 19,
+   "pm": 14,
+   "pos": "forward",
+   "r": 8,
+   "red": 0,
+   "sec": 1024,
+   "sh": 6,
+   "sv": 0,
+   "ta": 2,
+   "tm": 2
+  },
+  {
+   "a": 2,
+   "arch": 9,
+   "g": 0,
+   "gc": 5,
+   "mom": 0,
+   "p": "ah-me23",
+   "pa": 38,
+   "pm": 24,
+   "pos": "midfielder",
+   "r": 7.4,
+   "red": 0,
+   "sec": 1024,
+   "sh": 0,
+   "sv": 0,
+   "ta": 1,
+   "tm": 0
+  }
+ ],
+ "source": "ea"
+}

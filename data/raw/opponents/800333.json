@@ -1,0 +1,20 @@
+{
+ "gamesPlayed": 60,
+ "goals": 139,
+ "goalsAgainst": 151,
+ "id": 800333,
+ "losses": 32,
+ "matches": [
+  "101256541450336"
+ ],
+ "name": "The greatest 1",
+ "playoffGames": 0,
+ "promotions": 4,
+ "relegations": 3,
+ "skillRating": 1436,
+ "statsAt": "2026-10-15T12:28:00Z",
+ "ties": 5,
+ "unbeatenStreak": 0,
+ "winStreak": 0,
+ "wins": 23
+}

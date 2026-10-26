@@ -1,0 +1,22 @@
+{
+ "baselineMAE": 2.04,
+ "bestLineup": [
+  "DisBeMamoon",
+  "FlorianSqwirtz",
+  "MusaabChaudhary",
+  "ZebrasGraveyard"
+ ],
+ "bestProbs": {
+  "D": 0.144,
+  "L": 0.557,
+  "W": 0.299
+ },
+ "kalmanMAE": 1.84,
+ "matchMAE": 2.01,
+ "nApps": 195,
+ "nMatches": 51,
+ "poissonMAE": 1.8,
+ "ratingBaselineMAE": 0.91,
+ "ratingMAE": 0.91,
+ "trainedAt": "2026-10-18T13:22:10Z"
+}

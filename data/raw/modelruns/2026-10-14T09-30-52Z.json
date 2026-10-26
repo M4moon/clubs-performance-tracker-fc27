@@ -1,0 +1,20 @@
+{
+ "baselineMAE": 1.94,
+ "bestLineup": [
+  "FlorianSqwirtz",
+  "MaDHooMaN",
+  "Muhammadfatir",
+  "MusaabChaudhary"
+ ],
+ "bestProbs": {
+  "D": 0.176,
+  "L": 0.299,
+  "W": 0.525
+ },
+ "matchMAE": 1.69,
+ "nApps": 110,
+ "nMatches": 29,
+ "ratingBaselineMAE": 0.9,
+ "ratingMAE": 0.94,
+ "trainedAt": "2026-10-14T09:30:52Z"
+}

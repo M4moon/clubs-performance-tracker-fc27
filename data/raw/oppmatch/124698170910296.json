@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-21T19:19:36Z",
+ "humans": 2,
+ "matchId": "124698170910296",
+ "opp": "Alwashm Club",
+ "oppId": 1723051,
+ "players": [
+  {
+   "a": 0,
+   "arch": 13,
+   "g": 0,
+   "gc": 0,
+   "mom": 0,
+   "p": "w45GK-",
+   "pa": 0,
+   "pm": 0,
+   "pos": "forward",
+   "r": 5.4,
+   "red": 1,
+   "sec": 903,
+   "sh": 0,
+   "sv": 0,
+   "ta": 5,
+   "tm": 0
+  },
+  {
+   "a": 0,
+   "arch": 9,
+   "g": 0,
+   "gc": 0,
+   "mom": 0,
+   "p": "tareq9-_-",
+   "pa": 24,
+   "pm": 13,
+   "pos": "midfielder",
+   "r": 6.7,
+   "red": 0,
+   "sec": 903,
+   "sh": 1,
+   "sv": 0,
+   "ta": 2,
+   "tm": 2
+  }
+ ],
+ "source": "ea"
+}

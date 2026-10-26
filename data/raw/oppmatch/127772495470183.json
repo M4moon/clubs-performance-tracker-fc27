@@ -1,0 +1,47 @@
+{
+ "fetchedAt": "2026-10-22T18:19:49Z",
+ "humans": 2,
+ "matchId": "127772495470183",
+ "opp": "N o M e r c y",
+ "oppId": 1828876,
+ "players": [
+  {
+   "a": 0,
+   "arch": 12,
+   "g": 1,
+   "gc": 4,
+   "mom": 0,
+   "note": "EA reported 6241s real time; capped",
+   "p": "MrRexn",
+   "pa": 35,
+   "pm": 30,
+   "pos": "forward",
+   "r": 7.8,
+   "red": 0,
+   "sec": 941,
+   "sh": 3,
+   "sv": 0,
+   "ta": 6,
+   "tm": 3
+  },
+  {
+   "a": 1,
+   "arch": 8,
+   "g": 0,
+   "gc": 4,
+   "mom": 0,
+   "p": "ll9Z",
+   "pa": 42,
+   "pm": 26,
+   "pos": "forward",
+   "r": 7.1,
+   "red": 0,
+   "sec": 941,
+   "sh": 1,
+   "sv": 0,
+   "ta": 3,
+   "tm": 3
+  }
+ ],
+ "source": "ea"
+}

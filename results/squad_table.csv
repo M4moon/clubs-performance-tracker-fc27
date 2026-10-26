@@ -1,0 +1,9 @@
+player,games,positions,avg_rating,goals_per_game,assists_per_game,shots_per_game,shot_conversion_pct,passes_made_per_game,pass_completion_pct,tackles_won_per_game,tackle_success_pct,motm,team_ppg_with,team_ppg_without,team_gd_with,team_gd_without,team_gd_vs_expected_with,team_gd_vs_expected_without,with_minus_without,with_minus_without_se,avg_opponent_skill
+MusaabChaudhary,92,"midfielder 44, forward 34, defender 14",8.14,0.55,0.64,2.18,25.4,13.7,63.8,1.77,22.6,25,1.16,,-0.58,,-0.0,,,,1496.0
+DisBeMamoon,71,"midfielder 42, forward 29",7.63,0.39,0.51,1.49,26.4,12.1,61.6,1.27,16.5,11,1.08,1.43,-0.72,-0.1,-0.11,0.36,-0.47,0.51,1500.0
+ZebrasGraveyard,59,"forward 44, midfielder 15",6.99,0.37,0.63,1.1,33.8,7.7,61.0,0.51,32.3,3,1.2,1.09,-0.63,-0.48,0.18,-0.32,0.5,0.51,1520.0
+Muhammadfatir,53,"midfielder 31, forward 22",6.75,0.32,0.17,0.81,39.5,7.1,63.4,1.02,24.9,1,1.32,0.95,-0.34,-0.9,0.14,-0.19,0.34,0.53,1487.0
+FlorianSqwirtz,45,"forward 44, midfielder 1",7.55,1.16,0.31,3.13,36.9,8.4,79.0,0.27,14.1,6,1.33,1.0,-0.49,-0.66,0.34,-0.33,0.67,0.51,1523.0
+MaDHooMaN,28,"forward 24, midfielder 4",7.35,1.04,0.25,2.29,45.3,5.9,76.4,0.5,6.1,2,1.79,0.89,0.79,-1.17,0.8,-0.35,1.16,0.52,1439.0
+bxlter,18,"forward 14, midfielder 4",6.33,0.33,0.17,1.0,33.3,5.2,61.2,0.28,33.3,0,1.0,1.2,-1.83,-0.27,-0.7,0.17,-0.88,0.65,1553.0
+Gaffy_G,5,midfielder 5,7.98,0.4,0.4,0.8,50.0,17.2,83.5,0.8,28.6,0,1.2,1.16,-1.0,-0.55,-0.12,0.01,-0.13,1.37,1527.0

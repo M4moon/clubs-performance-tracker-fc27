@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-23T22:20:22Z",
+ "humans": 2,
+ "matchId": "131926654190124",
+ "opp": "we goun",
+ "oppId": 1644798,
+ "players": [
+  {
+   "a": 2,
+   "arch": 8,
+   "g": 0,
+   "gc": 2,
+   "mom": 0,
+   "p": "hrraki",
+   "pa": 31,
+   "pm": 22,
+   "pos": "midfielder",
+   "r": 7.6,
+   "red": 0,
+   "sec": 911,
+   "sh": 0,
+   "sv": 0,
+   "ta": 1,
+   "tm": 0
+  },
+  {
+   "a": 0,
+   "arch": 10,
+   "g": 4,
+   "gc": 2,
+   "mom": 1,
+   "p": "Milkman1942",
+   "pa": 26,
+   "pm": 22,
+   "pos": "forward",
+   "r": 10,
+   "red": 0,
+   "sec": 911,
+   "sh": 6,
+   "sv": 0,
+   "ta": 4,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

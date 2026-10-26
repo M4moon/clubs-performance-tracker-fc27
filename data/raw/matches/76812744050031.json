@@ -1,0 +1,67 @@
+{
+ "fetchedAt": "2026-10-08T11:05:00Z",
+ "ga": 1,
+ "gf": 1,
+ "humans": 2,
+ "id": "76812744050031",
+ "opp": "FC barcelonah",
+ "oppHumans": 2,
+ "oppId": 764487,
+ "players": [
+  {
+   "a": 0,
+   "arch": 9,
+   "g": 1,
+   "mom": 1,
+   "p": "MusaabChaudhary",
+   "pa": 31,
+   "pm": 14,
+   "pos": "midfielder",
+   "r": 8.6,
+   "red": 0,
+   "sec": 920,
+   "sh": 1,
+   "sv": 0,
+   "ta": 12,
+   "tm": 5
+  },
+  {
+   "a": 1,
+   "arch": 13,
+   "g": 0,
+   "mom": 0,
+   "p": "FlorianSqwirtz",
+   "pa": 16,
+   "pm": 8,
+   "pos": "forward",
+   "r": 6.5,
+   "red": 0,
+   "sec": 920,
+   "sh": 3,
+   "sv": 0,
+   "ta": 2,
+   "tm": 0
+  }
+ ],
+ "res": "D",
+ "source": "ea",
+ "them": {
+  "pa": 46,
+  "pm": 32,
+  "rating": 7.25,
+  "shots": 12,
+  "ta": 5,
+  "tm": 0
+ },
+ "ts": 1791398618,
+ "type": "league",
+ "us": {
+  "ast": 1,
+  "hg": 1,
+  "pa": 47,
+  "pm": 22,
+  "shots": 4,
+  "ta": 14,
+  "tm": 5
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-18T13:20:00Z",
+ "humans": 2,
+ "matchId": "114264139570253",
+ "opp": "M 5 B T",
+ "oppId": 1058807,
+ "players": [
+  {
+   "a": 1,
+   "arch": 9,
+   "g": 1,
+   "gc": 1,
+   "mom": 1,
+   "p": "QbroS1",
+   "pa": 31,
+   "pm": 29,
+   "pos": "midfielder",
+   "r": 9.1,
+   "red": 0,
+   "sec": 966,
+   "sh": 3,
+   "sv": 0,
+   "ta": 7,
+   "tm": 3
+  },
+  {
+   "a": 0,
+   "arch": 12,
+   "g": 1,
+   "gc": 1,
+   "mom": 0,
+   "p": "oc507wi7vmoj",
+   "pa": 4,
+   "pm": 3,
+   "pos": "forward",
+   "r": 6.7,
+   "red": 0,
+   "sec": 966,
+   "sh": 3,
+   "sv": 0,
+   "ta": 2,
+   "tm": 0
+  }
+ ],
+ "source": "ea"
+}

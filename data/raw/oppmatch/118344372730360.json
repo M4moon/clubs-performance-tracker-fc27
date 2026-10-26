@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-19T19:19:18Z",
+ "humans": 2,
+ "matchId": "118344372730360",
+ "opp": "Aljaz3",
+ "oppId": 114266,
+ "players": [
+  {
+   "a": 0,
+   "arch": 6,
+   "g": 0,
+   "gc": 1,
+   "mom": 0,
+   "p": "Mosazette",
+   "pa": 8,
+   "pm": 5,
+   "pos": "forward",
+   "r": 6.7,
+   "red": 0,
+   "sec": 370,
+   "sh": 0,
+   "sv": 0,
+   "ta": 2,
+   "tm": 1
+  },
+  {
+   "a": 0,
+   "arch": 13,
+   "g": 1,
+   "gc": 1,
+   "mom": 1,
+   "p": "Kenpachi_VII",
+   "pa": 5,
+   "pm": 4,
+   "pos": "forward",
+   "r": 7.6,
+   "red": 0,
+   "sec": 370,
+   "sh": 2,
+   "sv": 0,
+   "ta": 2,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

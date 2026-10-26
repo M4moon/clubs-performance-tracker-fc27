@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-16T10:19:52Z",
+ "humans": 2,
+ "matchId": "104914757760464",
+ "opp": "Haily10",
+ "oppId": 1020234,
+ "players": [
+  {
+   "a": 0,
+   "arch": 12,
+   "g": 0,
+   "gc": 6,
+   "mom": 0,
+   "p": "Haily_Tik",
+   "pa": 27,
+   "pm": 20,
+   "pos": "forward",
+   "r": 6.4,
+   "red": 0,
+   "sec": 897,
+   "sh": 3,
+   "sv": 0,
+   "ta": 6,
+   "tm": 3
+  },
+  {
+   "a": 0,
+   "arch": 10,
+   "g": 1,
+   "gc": 6,
+   "mom": 0,
+   "p": "MR3B-070",
+   "pa": 22,
+   "pm": 18,
+   "pos": "midfielder",
+   "r": 8,
+   "red": 0,
+   "sec": 896,
+   "sh": 3,
+   "sv": 0,
+   "ta": 1,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

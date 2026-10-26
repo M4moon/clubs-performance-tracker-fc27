@@ -1,0 +1,18 @@
+{
+ "baselineMAE": 1.94,
+ "bestLineup": [
+  "FlorianSqwirtz",
+  "MaDHooMaN"
+ ],
+ "bestProbs": {
+  "D": 0.151,
+  "L": 0.21,
+  "W": 0.639
+ },
+ "matchMAE": 1.76,
+ "nApps": 110,
+ "nMatches": 29,
+ "ratingBaselineMAE": 0.9,
+ "ratingMAE": 0.97,
+ "trainedAt": "2026-10-14T09:00:40Z"
+}

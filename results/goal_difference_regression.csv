@@ -1,0 +1,6 @@
+term,goal_diff_effect,std_error
+"intercept (median opponent, equal numbers, game 0)",-0.24,0.66
+per +100 opponent skill rating,-0.87,0.19
+per extra human vs opponent,0.24,0.16
+per later game in session (capped at 6),-0.13,0.16
+playoff game,0.0,0.82

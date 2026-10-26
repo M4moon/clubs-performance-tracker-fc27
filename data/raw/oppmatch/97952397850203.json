@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-14T08:45:00Z",
+ "humans": 2,
+ "matchId": "97952397850203",
+ "opp": "Sabis yas",
+ "oppId": 1205981,
+ "players": [
+  {
+   "a": 0,
+   "arch": 11,
+   "g": 0,
+   "gc": 3,
+   "mom": 0,
+   "p": "MZ-ZAYED",
+   "pa": 5,
+   "pm": 4,
+   "pos": "midfielder",
+   "r": 5.7,
+   "red": 0,
+   "sec": 279,
+   "sh": 0,
+   "sv": 0,
+   "ta": 2,
+   "tm": 0
+  },
+  {
+   "a": 0,
+   "arch": 13,
+   "g": 0,
+   "gc": 0,
+   "mom": 0,
+   "p": "Zaljunaibi",
+   "pa": 0,
+   "pm": 0,
+   "pos": "forward",
+   "r": 6.1,
+   "red": 0,
+   "sec": 279,
+   "sh": 0,
+   "sv": 0,
+   "ta": 0,
+   "tm": 0
+  }
+ ],
+ "source": "ea"
+}

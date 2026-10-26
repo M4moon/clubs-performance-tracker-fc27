@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-22T18:19:49Z",
+ "humans": 2,
+ "matchId": "127260734000119",
+ "opp": "ALSH8HŒ",
+ "oppId": 625160,
+ "players": [
+  {
+   "a": 1,
+   "arch": 13,
+   "g": 1,
+   "gc": 2,
+   "mom": 0,
+   "p": "almoshageb",
+   "pa": 16,
+   "pm": 11,
+   "pos": "forward",
+   "r": 7.6,
+   "red": 0,
+   "sec": 1078,
+   "sh": 8,
+   "sv": 0,
+   "ta": 3,
+   "tm": 1
+  },
+  {
+   "a": 1,
+   "arch": 11,
+   "g": 3,
+   "gc": 2,
+   "mom": 1,
+   "p": "bo-_o7",
+   "pa": 37,
+   "pm": 26,
+   "pos": "midfielder",
+   "r": 9.7,
+   "red": 0,
+   "sec": 1078,
+   "sh": 4,
+   "sv": 0,
+   "ta": 5,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

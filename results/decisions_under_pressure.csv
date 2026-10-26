@@ -1,0 +1,8 @@
+factor,group,appearances,games,good_or_best_option_pct,in_position_pct,possession_lost_per_player_game
+Match type,League,245,64,48.3,69.9,4.08
+Match type,Playoff,50,12,48.7,64.7,3.58
+Opponent skill,Weaker half (under 1498),152,38,49.7,69.5,3.79
+Opponent skill,Stronger half (1498+),143,38,46.8,68.3,4.22
+Game in session,Games 1-2,66,21,49.8,74.3,4.91
+Game in session,Games 3-4,64,19,48.1,74.8,4.62
+Game in session,Game 5 or later,165,36,47.8,64.5,3.39

@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-24T19:19:31Z",
+ "humans": 1,
+ "matchId": "134826335810282",
+ "opp": "Hilal United",
+ "oppId": 887227,
+ "players": [
+  {
+   "a": 0,
+   "arch": 12,
+   "g": 0,
+   "gc": 0,
+   "mom": 0,
+   "p": "sonson_h2014",
+   "pa": 0,
+   "pm": 0,
+   "pos": "forward",
+   "r": 3,
+   "red": 0,
+   "sec": 0,
+   "sh": 0,
+   "sv": 0,
+   "ta": 0,
+   "tm": 0
+  },
+  {
+   "a": 0,
+   "arch": 11,
+   "g": 0,
+   "gc": 3,
+   "mom": 0,
+   "p": "MkzDaGoat",
+   "pa": 11,
+   "pm": 5,
+   "pos": "midfielder",
+   "r": 6.4,
+   "red": 0,
+   "sec": 604,
+   "sh": 1,
+   "sv": 0,
+   "ta": 2,
+   "tm": 1
+  }
+ ],
+ "source": "ea"
+}

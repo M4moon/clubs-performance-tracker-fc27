@@ -1,0 +1,4 @@
+model_win_chance,games,average_forecast_pct,actual_win_pct
+under 30%,32,19.0,25.0
+30-50%,46,37.5,41.3
+50% or more,4,55.6,75.0

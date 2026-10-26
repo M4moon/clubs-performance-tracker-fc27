@@ -1,0 +1,46 @@
+{
+ "fetchedAt": "2026-10-23T20:22:03Z",
+ "humans": 2,
+ "matchId": "131552790530410",
+ "opp": "T3LIM",
+ "oppId": 960970,
+ "players": [
+  {
+   "a": 0,
+   "arch": 9,
+   "g": 1,
+   "gc": 1,
+   "mom": 0,
+   "p": "cf_sr",
+   "pa": 19,
+   "pm": 9,
+   "pos": "midfielder",
+   "r": 7,
+   "red": 0,
+   "sec": 975,
+   "sh": 3,
+   "sv": 0,
+   "ta": 1,
+   "tm": 0
+  },
+  {
+   "a": 0,
+   "arch": 10,
+   "g": 2,
+   "gc": 1,
+   "mom": 0,
+   "p": "F1-EAI",
+   "pa": 12,
+   "pm": 7,
+   "pos": "forward",
+   "r": 7.9,
+   "red": 0,
+   "sec": 975,
+   "sh": 5,
+   "sv": 0,
+   "ta": 5,
+   "tm": 0
+  }
+ ],
+ "source": "ea"
+}

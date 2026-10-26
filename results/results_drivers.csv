@@ -1,0 +1,9 @@
+factor,group,games,points_per_game,goal_diff_per_game,win_pct
+Opponent skill rating,Weaker half (under 1498),46,1.65,0.72,52.2
+Opponent skill rating,Stronger half (skill 1498+),46,0.67,-1.87,19.6
+"Human players, us vs them",Fewer humans than them,23,0.57,-1.74,13.0
+"Human players, us vs them",Same number,22,0.86,-1.36,27.3
+"Human players, us vs them",More humans than them,47,1.6,0.36,51.1
+Game number in a session,Games 1-2,27,1.15,-0.22,37.0
+Game number in a session,Games 3-4,25,1.08,-0.8,32.0
+Game number in a session,Game 5 or later,40,1.23,-0.68,37.5
